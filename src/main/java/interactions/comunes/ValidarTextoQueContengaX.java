@@ -1,4 +1,4 @@
-package interactions.Click;
+package interactions.comunes;
 
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Interaction;
@@ -7,21 +7,21 @@ import utils.AndroidObject;
 
 import static net.serenitybdd.screenplay.Tasks.instrumented;
 
-public class ClickTextoQueContengaX extends AndroidObject implements Interaction {
+public class ValidarTextoQueContengaX extends AndroidObject implements Interaction {
 
   private String text;
 
-  public ClickTextoQueContengaX(String text) {
+  public ValidarTextoQueContengaX(String text) {
     this.text = text;
   }
 
   @Override
   @Step("Valida que el texto '#text' este contenido en otro texto visible.")
   public <T extends Actor> void performAs(T actor) {
-    ClickElTextoContiene(actor, text);
+    ElTextoContiene(actor, text);
   }
 
   public static Interaction elTextoContiene(String text) {
-    return instrumented(ClickTextoQueContengaX.class, text);
+    return instrumented(ValidarTextoQueContengaX.class, text);
   }
 }

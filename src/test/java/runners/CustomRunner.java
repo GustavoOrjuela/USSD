@@ -5,7 +5,6 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import utils.BeforeSuite;
-import utils.DataToFeature;
 import utils.SeleniumFunctions;
 
 import java.io.IOException;
@@ -58,14 +57,12 @@ public class CustomRunner extends Runner {
     try {
       String environment = readProperties("Environment");
       functions.saveInScenario("Environment", environment);
-
-      DataToFeature.backUpFeaturesFile();
       runAnnotatedMethods(BeforeSuite.class);
       cucumberWithSerenity = new CucumberWithSerenity(classValue);
     } catch (Exception e) {
       e.printStackTrace();
     }
     cucumberWithSerenity.run(notifier);
-    DataToFeature.restoreBackUpFeatures();
+
   }
 }
