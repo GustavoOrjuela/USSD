@@ -78,5 +78,10 @@ public class USSDPage extends PageObject {
     public static final Target TECLADO =
             Target.the("Imagen de espera de CLaro")
                     .located(MobileBy.id("com.google.android.dialer:id/dialpad_view"));
+
+    public static final Target BTN_CANCELAR =
+            Target.the("Botón Cancelar")
+                    .located(MobileBy.id("android:id/button2"));
+
 }
 
