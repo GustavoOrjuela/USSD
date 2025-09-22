@@ -4,6 +4,9 @@ gen/
 out/
 null/
 
+#Generated reports
+reportes/
+
 # Gradle files
 .gradle
 build/

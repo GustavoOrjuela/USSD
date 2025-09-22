@@ -42,17 +42,22 @@ public class RealizarLlamada implements Task {
                     WaitFor.aTime(1000));
         }
 
+        if (!Presence.of(TECLADO_TELEFONO).viewedBy(actor).resolveAll().isEmpty()) {
         actor.attemptsTo(
                 Click.on(TECLADO_TELEFONO),
                 Enter.theValue(numero).into(By.id("digits")));
         CapturaDePantallaMovil.tomarCapturaPantalla("captura_pantalla");
 
+        } else {
+            actor.attemptsTo(
+            Click.on(TECLADO_TELEFONO2),
+                    Enter.theValue(numero).into(By.id("digits")));
+            CapturaDePantallaMovil.tomarCapturaPantalla("captura_pantalla");
+        }
 
         actor.attemptsTo(
                 Click.on(BTN_LLAMAR),
                 WaitUntil.the(IMG_ESPERA, isNotPresent()));
-
-
     }
 
 }

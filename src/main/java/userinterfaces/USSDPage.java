@@ -9,7 +9,9 @@ public class USSDPage extends PageObject {
     public static final Target TECLADO_TELEFONO =
             Target.the("Teclado del telefono")
                     .located(MobileBy.id("com.google.android.dialer:id/tab_dialpad"));
-
+    public static final Target TECLADO_TELEFONO2 =
+            Target.the("Teclado del telefono")
+                    .located(MobileBy.id("com.google.android.dialer:id/dialpad_fab"));
     public static final Target BTN_LLAMAR =
             Target.the("Boton de marcar")
                     .located(MobileBy.id("com.google.android.dialer:id/dialpad_voice_call_button"));

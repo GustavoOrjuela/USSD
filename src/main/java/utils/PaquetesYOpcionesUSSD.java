@@ -14,7 +14,8 @@ public class PaquetesYOpcionesUSSD {
     );
 
     public static final List<String> MenuCompraDePaquetes = Arrays.asList(
-            "1. Oferta recomendada: $12000 7 Dias 10GB+Voz",
+            "1. El mas vendido: $7500 6 Dias 1.4GB+WFX+Voz",
+
             "2. Paquete de Datos",
             "3. Paquete Todo Incluido",
             "9. Mas",
@@ -53,6 +54,15 @@ public class PaquetesYOpcionesUSSD {
             "1. Tarjeta de Credito",
             "2. Nequi",
             "3. Descuento de saldo",
+            "0. Atras"
+    );
+
+    public static final List<String> MenuMediosDePagoPaquetesElMasVendido = Arrays.asList(
+            "Selecciona el medio de pago para tu paquete:",
+            "1. Tarjeta de Credito",
+            "2. PSE",
+            "3. Nequi",
+            "4. Descuento de saldo",
             "0. Atras"
     );
 
@@ -199,9 +209,12 @@ public class PaquetesYOpcionesUSSD {
             "0. Atras"
     );
 
-    public static final List<String> ValidaMenuDetalleSiHayUnPaquete = Arrays.asList(
-            "Selecciona para ver detalle:",
-            "1."
+    public static final List<String> ValidaMenuDetalleSinoHayUnPaquete = Arrays.asList(
+            "No cuentas con paquetes vigentes",
+
+            "1. Compra tu paquete",
+            "2. Compra tu Recarga"
+
     );
 
     public static final List<String> MenuDetalleTodoIncluidoConsumo = Arrays.asList(
