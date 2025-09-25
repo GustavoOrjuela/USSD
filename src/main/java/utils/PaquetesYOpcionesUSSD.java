@@ -14,7 +14,7 @@ public class PaquetesYOpcionesUSSD {
     );
 
     public static final List<String> MenuCompraDePaquetes = Arrays.asList(
-            "1. El mas vendido: $7500 6 Dias 1.4GB+WFX+Voz",
+            "1. ",
 
             "2. Paquete de Datos",
             "3. Paquete Todo Incluido",
