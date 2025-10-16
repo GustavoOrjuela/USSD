@@ -12,7 +12,7 @@ import java.io.IOException;
         features = "src/test/resources/features",
         glue = {"stepDefinitions", "utils", "hooks"},
         snippets = SnippetType.CAMELCASE,
-        tags = "@USSD_08"
+        tags = "@USSD_010"
 )
 
 @RunWith(CustomRunner.class)

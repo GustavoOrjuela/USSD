@@ -219,9 +219,7 @@ public class USSDSteps {
         System.out.println("🔍 Verificando Menu Recarga Valores Altos");
 
         theActorCalled(ACTOR_NAME).attemptsTo(
-                ValidarTextosQueContenganArrays.validarTexto(MenuRecargaValoresAltos),
-                Click.on(BTN_CANCELAR),
-                WaitFor.aTime(30000)
+                ValidarTextosQueContenganArrays.validarTexto(MenuRecargaValoresAltos)
         );
 
         System.out.println("✅ Información de Menu Recarga Valores Altos correctamente");
