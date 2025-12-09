@@ -26,9 +26,4 @@ public class GeneralRunner {
         System.out.println("🚀 Iniciando configuración para pruebas USSD...");
         System.out.println("✅ Configuración USSD completada");
     }
-    @BeforeClass
-    public static void registerListeners() {
-        StepEventBus.getEventBus().registerListener(new OllamaStepListener());
-        System.out.println("🔗 OllamaStepListener registrado correctamente");
-    }
 }

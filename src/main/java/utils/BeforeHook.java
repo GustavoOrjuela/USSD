@@ -20,19 +20,6 @@ public class BeforeHook {
 
   @Before
   public void initScenario(Scenario scenario) {
-
-    // ================================
-    // 🔹 Registrar Ollama SI NO está registrado
-    // ================================
-    try {
-      if (!StepEventBus.getEventBus().isBaseStepListenerRegistered()) {
-        StepEventBus.getEventBus().registerListener(new OllamaStepListener());
-        LOGGER.info("[OLLAMA] Listener registrado correctamente.");
-      }
-    } catch (Exception e) {
-      LOGGER.error("[OLLAMA] Error registrando listener: " + e.getMessage());
-    }
-
     // ================================
     // 🔹 Cerrar popup automático
     // ================================

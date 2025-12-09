@@ -92,6 +92,8 @@ dependencies {
         exclude group: 'com.sun.jdmk', module: 'jmxtools'
         exclude group: 'javax.jms', module: 'jms'
     }
+    //ollama
+    implementation 'com.squareup.okhttp3:okhttp:3.14.9'
 
     // Local libraries
     implementation fileTree(dir: 'libs', include: ['*.jar'])
