@@ -9,51 +9,76 @@ import net.serenitybdd.screenplay.rest.abiities.CallAnApi;
 import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.By;
+import hooks.OllamaStepListener;
+import net.thucydides.core.steps.StepEventBus;
 
 import static net.serenitybdd.screenplay.actors.OnStage.theActorCalled;
 
 public class BeforeHook {
 
-  /********** Log Attribute **********/
   private static final Logger LOGGER = Logger.getLogger(BeforeHook.class);
 
   @Before
   public void initScenario(Scenario scenario) {
 
+    // ================================
+    // 🔹 Registrar Ollama SI NO está registrado
+    // ================================
+    try {
+      if (!StepEventBus.getEventBus().isBaseStepListenerRegistered()) {
+        StepEventBus.getEventBus().registerListener(new OllamaStepListener());
+        LOGGER.info("[OLLAMA] Listener registrado correctamente.");
+      }
+    } catch (Exception e) {
+      LOGGER.error("[OLLAMA] Error registrando listener: " + e.getMessage());
+    }
+
+    // ================================
+    // 🔹 Cerrar popup automático
+    // ================================
     try {
       AndroidDriver driver = MyDriver.get();
+
       if (driver != null) {
-        // Verificar si está visible el botón "Aceptar" del popup
+
         if (driver.findElements(By.xpath("//*[@text='Aceptar']")).size() > 0) {
-          // Presionar "Cancelar" para cerrarlo
           driver.findElement(By.xpath("//*[@text='Cancelar']")).click();
-          System.out.println("📌 Popup de Claro detectado y cerrado automáticamente (post-step).");
+          System.out.println("📌 Popup de Claro detectado y cerrado automáticamente.");
         }
       }
+
     } catch (Exception e) {
       // Silencioso: no debe interrumpir la ejecución
     }
 
-    LOGGER.info(
-            "************************************************************************************************");
+    // ================================
+    // 🔹 Logs de inicio
+    // ================================
+    LOGGER.info("************************************************************************************************");
     LOGGER.info("[ Start stage ] --> " + scenario.getName());
-    LOGGER.info(
-            "************************************************************************************************");
+    LOGGER.info("************************************************************************************************");
 
-    OnStage.setTheStage(new OnlineCast()); // ← esto evita el error
+    // ================================
+    // 🔹 Inicializar Screenplay
+    // ================================
+    OnStage.setTheStage(new OnlineCast());
   }
 
+  // ================================
+  // 🔹 Config API (si se usa)
+  // ================================
   public static void prepareStage(String urlBase) {
     OnStage.setTheStage(new OnlineCast());
     theActorCalled("Usuario").whoCan(CallAnApi.at(urlBase));
   }
 
+  // ================================
+  // 🔹 Logs final escenario
+  // ================================
   @After
   public void endScenario(Scenario scenario) {
-    LOGGER.info(
-            "************************************************************************************************");
+    LOGGER.info("************************************************************************************************");
     LOGGER.info("[ End of stage ] --> " + scenario.getName());
-    LOGGER.info(
-            "************************************************************************************************");
+    LOGGER.info("************************************************************************************************");
   }
 }
