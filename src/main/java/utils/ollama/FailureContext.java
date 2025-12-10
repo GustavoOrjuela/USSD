@@ -11,20 +11,14 @@ import java.util.Base64;
 /**
  * Contexto completo de un fallo de prueba para análisis con IA.
  *
- * Captura toda la información relevante en el momento del fallo:
- * - Page source completo
- * - Screenshot en base64
- * - Elemento que se buscaba
- * - Stack trace del error
- * - Timestamp
- *
- * Principios SOLID:
- * - SRP: Responsabilidad única de encapsular contexto de fallo
- * - OCP: Abierto para extensión (agregar más contexto)
- * - ISP: Interfaz clara y específica para análisis de fallos
+ * VERSION 2.0 - MEJORAS:
+ * - Captura robusta de page source con retry y validación
+ * - Detección de page source vacío/corrupto
+ * - Logging detallado del tamaño capturado
+ * - Fallback con múltiples intentos
  *
  * @author Senior Test Automation Engineer
- * @since 1.0
+ * @since 2.0
  */
 public class FailureContext {
 
@@ -35,9 +29,9 @@ public class FailureContext {
     private final String pageSource;
     private final String screenshotBase64;
     private final String elementLocator;
-    private final String elementType; // xpath, text, id, etc.
+    private final String elementType;
     private final LocalDateTime timestamp;
-    private final String ussdCode; // Código USSD que se estaba probando
+    private final String ussdCode;
 
     private FailureContext(Builder builder) {
         this.testName = builder.testName;
@@ -70,20 +64,16 @@ public class FailureContext {
 
     /**
      * Obtiene un resumen truncado del page source para logging.
-     * El análisis completo usa el page source completo.
      */
     public String getTruncatedPageSource(int maxLength) {
         if (pageSource == null || pageSource.length() <= maxLength) {
             return pageSource;
         }
-        return pageSource.substring(0, maxLength) + "\n... [truncado para log]";
+        return pageSource.substring(0, maxLength) + "\n... [truncado para log, total: " + pageSource.length() + " chars]";
     }
 
     /**
      * Captura screenshot del driver actual.
-     *
-     * @param driver WebDriver actual
-     * @return Screenshot en base64 o null si falla
      */
     private static String captureScreenshot(WebDriver driver) {
         try {
@@ -134,16 +124,113 @@ public class FailureContext {
             return this;
         }
 
+        /**
+         * VERSION 2.0: Captura robusta de page source con retry y validación.
+         *
+         * CAMBIOS:
+         * - Múltiples intentos con esperas entre reintentos
+         * - Validación de contenido útil (debe tener TextView, text=, etc.)
+         * - Logging detallado del tamaño capturado
+         * - Detección de page source vacío/corrupto
+         */
         public Builder withDriver(WebDriver driver) {
             if (driver != null) {
                 try {
-                    this.pageSource = driver.getPageSource();
+                    System.out.println("📸 Capturando contexto del driver...");
+
+                    // Capturar page source con retry inteligente
+                    this.pageSource = capturePageSourceWithRetry(driver, 3);
+
+                    // Validar que el page source tenga contenido útil
+                    if (this.pageSource == null || this.pageSource.length() < 1000) {
+                        System.err.println("⚠️ [FailureContext] Page source VACÍO o CORRUPTO detectado!");
+                        System.err.println("   Tamaño: " + (this.pageSource != null ? this.pageSource.length() : 0) + " caracteres");
+                        System.err.println("   🔄 Realizando captura de emergencia...");
+
+                        // Esperar 1 segundo extra y capturar nuevamente
+                        Thread.sleep(1000);
+                        String emergencyCapture = driver.getPageSource();
+
+                        if (emergencyCapture != null && emergencyCapture.length() > this.pageSource.length()) {
+                            System.out.println("✅ Captura de emergencia exitosa: " + emergencyCapture.length() + " chars");
+                            this.pageSource = emergencyCapture;
+                        } else {
+                            System.err.println("❌ Captura de emergencia también falló");
+                        }
+                    }
+
+                    // Log final del tamaño capturado
+                    int finalSize = this.pageSource != null ? this.pageSource.length() : 0;
+                    if (finalSize < 1000) {
+                        System.err.println("⚠️ [CRÍTICO] Page source final MUY PEQUEÑO: " + finalSize + " chars");
+                        System.err.println("   Esto causará análisis genéricos de IA sin elementos reales.");
+                    } else if (finalSize < 5000) {
+                        System.out.println("⚠️ Page source capturado (tamaño moderado): " + finalSize + " chars");
+                    } else {
+                        System.out.println("✅ Page source capturado correctamente: " + finalSize + " chars");
+                    }
+
+                    // Capturar screenshot
                     this.screenshotBase64 = captureScreenshot(driver);
+
                 } catch (Exception e) {
-                    System.err.println("⚠️ Error capturando contexto del driver: " + e.getMessage());
+                    System.err.println("❌ Error capturando contexto del driver: " + e.getMessage());
+                    e.printStackTrace();
                 }
+            } else {
+                System.err.println("⚠️ Driver es NULL, no se puede capturar contexto");
             }
             return this;
+        }
+
+        /**
+         * Captura page source con retry para asegurar que tenga contenido.
+         *
+         * Validaciones:
+         * - Tamaño mínimo: 1000 caracteres
+         * - Debe contener: TextView, Button, text=, resource-id=
+         * - Retry con esperas incrementales
+         */
+        private String capturePageSourceWithRetry(WebDriver driver, int maxRetries) {
+            for (int i = 0; i < maxRetries; i++) {
+                try {
+                    String ps = driver.getPageSource();
+
+                    // Validar que tenga contenido útil
+                    boolean hasUsefulContent = ps != null && ps.length() > 1000 &&
+                            (ps.contains("TextView") || ps.contains("Button") ||
+                                    ps.contains("text=") || ps.contains("resource-id="));
+
+                    if (hasUsefulContent) {
+                        System.out.println("✅ Intento " + (i+1) + "/" + maxRetries +
+                                ": Page source válido capturado (" + ps.length() + " chars)");
+                        return ps;
+                    }
+
+                    System.err.println("⚠️ Intento " + (i+1) + "/" + maxRetries +
+                            ": Page source sin contenido útil (" +
+                            (ps != null ? ps.length() : 0) + " chars)");
+
+                    // Espera incremental entre reintentos
+                    if (i < maxRetries - 1) {
+                        int waitTime = (i + 1) * 500; // 500ms, 1000ms, 1500ms
+                        System.out.println("   ⏳ Esperando " + waitTime + "ms antes del siguiente intento...");
+                        Thread.sleep(waitTime);
+                    }
+
+                } catch (Exception e) {
+                    System.err.println("❌ Error en intento " + (i+1) + ": " + e.getMessage());
+                }
+            }
+
+            // Último intento sin validación (devolver lo que sea)
+            System.err.println("⚠️ Todos los reintentos fallaron, devolviendo último page source capturado");
+            try {
+                return driver.getPageSource();
+            } catch (Exception e) {
+                System.err.println("❌ No se pudo capturar page source: " + e.getMessage());
+                return "[ERROR: Page source no disponible - " + e.getMessage() + "]";
+            }
         }
 
         public Builder withElementLocator(String locator, String type) {
@@ -168,7 +255,7 @@ public class FailureContext {
             for (StackTraceElement element : error.getStackTrace()) {
                 sb.append("\tat ").append(element.toString()).append("\n");
 
-                // Limitar stack trace a 10 líneas para no saturar el prompt
+                // Limitar stack trace a 10 líneas
                 if (sb.length() > 2000) {
                     sb.append("\t... [resto del stack trace omitido]");
                     break;
@@ -182,8 +269,10 @@ public class FailureContext {
     @Override
     public String toString() {
         return String.format(
-                "FailureContext{test='%s', step='%s', error='%s', timestamp='%s'}",
-                testName, stepDescription, errorMessage, getFormattedTimestamp()
+                "FailureContext{test='%s', step='%s', error='%s', pageSourceSize=%d, timestamp='%s'}",
+                testName, stepDescription, errorMessage,
+                (pageSource != null ? pageSource.length() : 0),
+                getFormattedTimestamp()
         );
     }
 }

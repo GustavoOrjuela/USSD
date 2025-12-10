@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  *
  * Configuración via system properties:
  * - ollama.url: URL del servidor Ollama (default: http://127.0.0.1:11434)
- * - ollama.model: Modelo a usar (default: mistral)
+ * - ollama.model: Modelo a usar (default: phi3)
  * - ollama.timeout: Timeout en segundos (default: 120)
  * - ollama.enabled: Habilitar/deshabilitar análisis (default: true)
  *
@@ -34,9 +34,9 @@ public class OllamaClient {
 
     // Configuración por defecto
     private static final String DEFAULT_OLLAMA_URL = "http://127.0.0.1:11434/api/generate";
-    private static final String DEFAULT_MODEL = "mistral";
-    private static final int DEFAULT_TIMEOUT_SECONDS = 120;
-    private static final int DEFAULT_CONNECT_TIMEOUT = 30;
+    private static final String DEFAULT_MODEL = "phi3";
+    private static final int DEFAULT_TIMEOUT_SECONDS = 240;
+    private static final int DEFAULT_CONNECT_TIMEOUT = 15;
     private static final int DEFAULT_WRITE_TIMEOUT = 60;
     private static final int MAX_RETRIES = 2;
 
@@ -161,8 +161,10 @@ public class OllamaClient {
 
         // Opciones adicionales para mejor rendimiento
         JSONObject options = new JSONObject();
-        options.put("temperature", 0.7); // Balance entre creatividad y precisión
-        options.put("num_predict", 2000); // Máximo tokens de respuesta
+        options.put("temperature", 0.3);      // Menos creatividad = más rápido
+        options.put("num_predict", 500);      // Respuestas más cortas
+        options.put("top_k", 10);             // Menos opciones a considerar
+        options.put("top_p", 0.5);            // Más determinista
         bodyJson.put("options", options);
 
         RequestBody body = RequestBody.create(

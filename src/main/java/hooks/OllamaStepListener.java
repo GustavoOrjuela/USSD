@@ -10,7 +10,6 @@ import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepListener;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
 import utils.MyDriver;
 import utils.ollama.FailureContext;
 import utils.ollama.OllamaAnalyzer;
@@ -19,33 +18,16 @@ import utils.ollama.OllamaClient;
 import java.util.Map;
 
 /**
- * Listener de Serenity BDD que intercepta fallos y los analiza con Ollama IA.
+ * VERSION 2.0 - Listener de Serenity BDD con análisis IA mejorado
  *
- * Funcionalidad:
- * - Detecta fallos en steps de Serenity
- * - Captura contexto completo (page source, screenshot, localizador)
- * - Envía a Ollama para análisis inteligente
- * - Integra resultados en reportes Serenity como HTML enriquecido
- * - Logs detallados en consola para debugging en tiempo real
- *
- * Tipos de fallos analizados:
- * - NoSuchElementException (el más común en USSD)
- * - TimeoutException
- * - StaleElementReferenceException
- * - Cualquier otro fallo (análisis general)
- *
- * Configuración via system properties:
- * - ollama.enabled=false para deshabilitar análisis
- * - ollama.model=llama2 para cambiar modelo
- * - ollama.timeout=180 para aumentar timeout
- *
- * Principios SOLID:
- * - SRP: Responsabilidad única de análisis de fallos con IA
- * - OCP: Extensible para nuevos tipos de análisis
- * - DIP: Depende de abstracciones (OllamaClient, FailureContext)
+ * MEJORAS:
+ * - Validación de page source capturado
+ * - Logging detallado del tamaño de contexto
+ * - Alertas cuando el page source está vacío
+ * - HTML enriquecido con highlights específicos
  *
  * @author Senior Test Automation Engineer
- * @since 1.0
+ * @since 2.0
  */
 public class OllamaStepListener implements StepListener {
 
@@ -56,7 +38,7 @@ public class OllamaStepListener implements StepListener {
 
     public OllamaStepListener() {
         this.ollamaClient = new OllamaClient();
-        System.out.println("🔗 [OllamaListener] Inicializado");
+        System.out.println("🔗 [OllamaListener v2.0] Inicializado");
         System.out.println("   " + ollamaClient.getModelInfo());
     }
 
@@ -81,7 +63,7 @@ public class OllamaStepListener implements StepListener {
         String stepDescription = failure.getMessage();
 
         System.out.println("\n╔══════════════════════════════════════════════════════════════╗");
-        System.out.println("║  🚨 FALLO DETECTADO - INICIANDO ANÁLISIS OLLAMA             ║");
+        System.out.println("║  🚨 FALLO DETECTADO - INICIANDO ANÁLISIS OLLAMA v2.0        ║");
         System.out.println("╚══════════════════════════════════════════════════════════════╝");
         System.out.println("📍 Step: " + stepDescription);
         System.out.println("⚠️  Error: " + (cause != null ? cause.getClass().getSimpleName() : "Unknown"));
@@ -101,6 +83,24 @@ public class OllamaStepListener implements StepListener {
         if (context == null) {
             System.err.println("❌ [OllamaListener] No se pudo construir contexto, abortando análisis");
             return;
+        }
+
+        // VALIDACIÓN CRÍTICA: Verificar tamaño del page source
+        int pageSourceSize = context.getPageSource() != null ? context.getPageSource().length() : 0;
+        System.out.println("📊 Tamaño del page source capturado: " + pageSourceSize + " caracteres");
+
+        if (pageSourceSize < 1000) {
+            System.err.println("⚠️⚠️⚠️ [CRÍTICO] PAGE SOURCE VACÍO O CORRUPTO ⚠️⚠️⚠️");
+            System.err.println("   El análisis de IA será genérico sin elementos reales.");
+            System.err.println("   Causas posibles:");
+            System.err.println("   - Driver no capturó el page source correctamente");
+            System.err.println("   - Timing: página no cargada completamente");
+            System.err.println("   - Problema con Appium/UiAutomator");
+
+            // Registrar alerta en Serenity
+            Serenity.recordReportData()
+                    .withTitle("⚠️ Alerta: Page Source Vacío")
+                    .andContents(formatPageSourceWarning(pageSourceSize));
         }
 
         // Ejecutar análisis con Ollama
@@ -125,10 +125,9 @@ public class OllamaStepListener implements StepListener {
                     .withStepDescription(stepDescription)
                     .withError(cause);
 
-            // Capturar page source y screenshot del driver
+            // Capturar page source y screenshot del driver (CON RETRY ROBUSTO)
             if (driver != null) {
-                System.out.println("📸 Capturando page source y screenshot...");
-                contextBuilder.withDriver(driver);
+                contextBuilder.withDriver(driver); // Ahora tiene retry inteligente
             }
 
             // Extraer información del localizador si es NoSuchElementException
@@ -144,12 +143,6 @@ public class OllamaStepListener implements StepListener {
             FailureContext context = contextBuilder.build();
             System.out.println("✅ Contexto construido: " + context);
 
-            // Log muestra del page source
-            if (context.getPageSource() != null) {
-                System.out.println("📄 Page source capturado: " +
-                        context.getTruncatedPageSource(500).length() + " chars");
-            }
-
             return context;
 
         } catch (Exception e) {
@@ -160,29 +153,40 @@ public class OllamaStepListener implements StepListener {
     }
 
     /**
-     * Extrae información del localizador del mensaje de error.
+     * VERSION 2.0: Extracción mejorada de localizador completo.
      */
     private void extractLocatorInfo(String errorMessage, FailureContext.Builder contextBuilder) {
         try {
-            // Ejemplos de mensajes:
-            // "An element could not be located... Using=-android uiautomator, value=new UiSelector().text(\"Teclado\")"
-            // "no such element: Unable to locate element: {\"method\":\"xpath\",\"selector\":\"//...\"]
+            System.out.println("🔍 Extrayendo localizador de: " + errorMessage.substring(0, Math.min(200, errorMessage.length())) + "...");
 
             if (errorMessage.contains("uiautomator")) {
-                // Extraer el localizador UiAutomator
+                // Buscar "value=" y capturar TODO hasta el final del UiSelector
                 int valueStart = errorMessage.indexOf("value=");
                 if (valueStart != -1) {
-                    String locator = errorMessage.substring(valueStart + 6);
-                    // Limpiar hasta el siguiente paréntesis o fin
-                    int endIndex = locator.indexOf(")");
-                    if (endIndex != -1) {
-                        locator = locator.substring(0, endIndex + 1);
+                    String fullLocator = errorMessage.substring(valueStart + 6);
+
+                    // Limpiar hasta encontrar el delimitador correcto
+                    // Delimitadores: "}", "\n", "Session ID"
+                    int endIndex = -1;
+
+                    if (fullLocator.contains("}")) {
+                        endIndex = fullLocator.indexOf("}");
                     }
-                    contextBuilder.withElementLocator(locator.trim(), "uiautomator");
-                    System.out.println("🎯 Localizador extraído: " + locator.trim());
+                    if (endIndex == -1 && fullLocator.contains("\n")) {
+                        endIndex = fullLocator.indexOf("\n");
+                    }
+                    if (endIndex == -1 && fullLocator.contains("Session ID")) {
+                        endIndex = fullLocator.indexOf("Session ID");
+                    }
+
+                    String cleanLocator = endIndex != -1 ?
+                            fullLocator.substring(0, endIndex).trim() :
+                            fullLocator.trim();
+
+                    contextBuilder.withElementLocator(cleanLocator, "uiautomator");
+                    System.out.println("🎯 Localizador completo extraído: " + cleanLocator);
                 }
             } else if (errorMessage.contains("xpath")) {
-                // Extraer xpath
                 int selectorStart = errorMessage.indexOf("selector\":\"");
                 if (selectorStart != -1) {
                     String xpath = errorMessage.substring(selectorStart + 11);
@@ -256,38 +260,42 @@ public class OllamaStepListener implements StepListener {
     }
 
     /**
-     * Formatea el análisis de Ollama como HTML enriquecido para el reporte.
+     * VERSION 2.0: HTML enriquecido con highlights específicos para textos encontrados.
      */
     private String formatOllamaAnalysisAsHtml(String analysis, FailureContext context, long durationMs) {
         StringBuilder html = new StringBuilder();
 
         html.append("<div style='font-family: Arial, sans-serif; padding: 15px; ")
-                .append("background-color: #f8f9fa; border-left: 4px solid #007bff; margin: 10px 0;'>");
+                .append("background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); ")
+                .append("border-radius: 8px; margin: 10px 0; color: white;'>");
 
-        // Header
-        html.append("<div style='background-color: #007bff; color: white; padding: 10px; ")
-                .append("margin: -15px -15px 15px -15px; border-radius: 4px 4px 0 0;'>");
-        html.append("<h3 style='margin: 0;'>🧠 Análisis Inteligente con IA</h3>");
-        html.append("<small>Modelo: ").append(ollamaClient.getModel())
+        // Header con gradiente
+        html.append("<div style='padding: 15px; margin: -15px -15px 15px -15px;'>");
+        html.append("<h3 style='margin: 0; font-size: 20px;'>🧠 Análisis Inteligente con IA</h3>");
+        html.append("<small style='opacity: 0.9;'>Modelo: ").append(ollamaClient.getModel())
                 .append(" | Duración: ").append(String.format("%.2f", durationMs / 1000.0))
                 .append("s | ").append(context.getFormattedTimestamp()).append("</small>");
         html.append("</div>");
 
         // Contexto del fallo
-        html.append("<div style='background-color: #fff3cd; padding: 10px; ")
-                .append("border-left: 3px solid #ffc107; margin-bottom: 15px;'>");
-        html.append("<strong>📍 Contexto:</strong><br>");
-        html.append("<code>").append(escapeHtml(context.getStepDescription())).append("</code><br>");
+        html.append("<div style='background-color: rgba(255,255,255,0.95); padding: 12px; ")
+                .append("border-left: 4px solid #ffc107; margin-bottom: 15px; ")
+                .append("border-radius: 4px; color: #333;'>");
+        html.append("<strong style='color: #d32f2f;'>📍 Contexto:</strong><br>");
+        html.append("<code style='background: #f5f5f5; padding: 3px 6px; border-radius: 3px;'>")
+                .append(escapeHtml(context.getStepDescription().substring(0, Math.min(150, context.getStepDescription().length()))))
+                .append("</code><br>");
         if (context.getElementLocator() != null) {
-            html.append("<strong>🎯 Elemento buscado:</strong> ")
-                    .append("<code>").append(escapeHtml(context.getElementLocator())).append("</code>");
+            html.append("<strong style='color: #1976d2;'>🎯 Elemento buscado:</strong> ")
+                    .append("<code style='background: #e3f2fd; padding: 3px 6px; border-radius: 3px; ")
+                    .append("font-weight: 600;'>").append(escapeHtml(context.getElementLocator())).append("</code>");
         }
         html.append("</div>");
 
-        // Análisis (convertir markdown a HTML básico)
+        // Análisis (convertir markdown a HTML con highlights)
         html.append("<div style='background-color: white; padding: 15px; ")
-                .append("border: 1px solid #dee2e6; border-radius: 4px;'>");
-        html.append(convertMarkdownToHtml(analysis));
+                .append("border-radius: 6px; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>");
+        html.append(convertMarkdownToHtmlEnhanced(analysis));
         html.append("</div>");
 
         html.append("</div>");
@@ -296,28 +304,64 @@ public class OllamaStepListener implements StepListener {
     }
 
     /**
-     * Convierte markdown básico a HTML para mejor visualización.
+     * VERSION 2.0: Conversión mejorada con highlights específicos para textos entre comillas.
      */
-    private String convertMarkdownToHtml(String markdown) {
+    private String convertMarkdownToHtmlEnhanced(String markdown) {
         if (markdown == null) return "";
 
         String html = escapeHtml(markdown);
 
-        // Headers
-        html = html.replaceAll("### (.*?)\\n", "<h4 style='color: #495057; margin-top: 15px;'>$1</h4>\n");
-        html = html.replaceAll("## (.*?)\\n", "<h3 style='color: #343a40;'>$1</h3>\n");
-        html = html.replaceAll("# (.*?)\\n", "<h2 style='color: #212529;'>$1</h2>\n");
+        // Headers con colores
+        html = html.replaceAll("### (.*?)(&lt;br&gt;|\\n)",
+                "<h4 style='color: #d32f2f; margin-top: 15px; border-bottom: 2px solid #ffcdd2; padding-bottom: 5px;'>$1</h4>");
+        html = html.replaceAll("## (.*?)(&lt;br&gt;|\\n)",
+                "<h3 style='color: #1976d2; margin-top: 20px; border-bottom: 3px solid #bbdefb; padding-bottom: 8px;'>$1</h3>");
 
         // Bold
-        html = html.replaceAll("\\*\\*(.*?)\\*\\*", "<strong>$1</strong>");
+        html = html.replaceAll("\\*\\*(.*?)\\*\\*", "<strong style='color: #d32f2f;'>$1</strong>");
 
-        // Code blocks
-        html = html.replaceAll("`([^`]+)`", "<code style='background-color: #f8f9fa; padding: 2px 5px; border-radius: 3px;'>$1</code>");
+        // Code blocks con gradiente
+        html = html.replaceAll("`([^`]+)`",
+                "<code style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); " +
+                        "color: white; padding: 3px 8px; border-radius: 4px; font-weight: 500;'>$1</code>");
+
+        // ⭐ HIGHLIGHT ESPECÍFICO: Textos entre comillas (probables elementos encontrados)
+        html = html.replaceAll("&quot;([^&]+)&quot;",
+                "<span style='background: linear-gradient(135deg, #fff9c4 0%, #ffeb3b 100%); " +
+                        "padding: 4px 8px; border-radius: 4px; border: 2px solid #fbc02d; " +
+                        "font-weight: 600; color: #000; display: inline-block; margin: 2px;'>\"$1\"</span>");
+
+        // Listas numeradas con íconos
+        html = html.replaceAll("(\\d+)\\. ",
+                "<span style='display: inline-block; width: 24px; height: 24px; background: #4caf50; " +
+                        "color: white; border-radius: 50%; text-align: center; line-height: 24px; " +
+                        "margin-right: 8px; font-size: 14px;'>$1</span>");
 
         // Line breaks
         html = html.replace("\n", "<br>");
 
         return html;
+    }
+
+    /**
+     * Formatea alerta de page source vacío.
+     */
+    private String formatPageSourceWarning(int size) {
+        return String.format(
+                "<div style='padding: 15px; background: linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%); " +
+                        "color: white; border-radius: 6px; border-left: 5px solid #fff;'>" +
+                        "<h4 style='margin: 0 0 10px 0;'>⚠️ Page Source Vacío Detectado</h4>" +
+                        "<p style='margin: 5px 0;'><strong>Tamaño capturado:</strong> %d caracteres (mínimo esperado: 1000)</p>" +
+                        "<p style='margin: 5px 0;'><strong>Impacto:</strong> El análisis de IA será genérico sin elementos reales de la pantalla.</p>" +
+                        "<p style='margin: 5px 0;'><strong>Causas posibles:</strong></p>" +
+                        "<ul style='margin: 5px 0 0 20px;'>" +
+                        "<li>Driver no capturó el page source correctamente</li>" +
+                        "<li>Timing: Pantalla USSD no cargada completamente</li>" +
+                        "<li>Problema con Appium/UiAutomator en el dispositivo</li>" +
+                        "</ul>" +
+                        "</div>",
+                size
+        );
     }
 
     /**
@@ -338,10 +382,10 @@ public class OllamaStepListener implements StepListener {
     private String formatFailureDetection(String step, Throwable cause) {
         StringBuilder sb = new StringBuilder();
         sb.append("<div style='padding: 10px; background-color: #f8d7da; border-left: 4px solid #dc3545;'>");
-        sb.append("<strong>Step:</strong> ").append(escapeHtml(step)).append("<br>");
+        sb.append("<strong>Step:</strong> ").append(escapeHtml(step.substring(0, Math.min(200, step.length())))).append("<br>");
         sb.append("<strong>Error:</strong> ").append(cause != null ? cause.getClass().getSimpleName() : "Unknown").append("<br>");
         if (cause != null && cause.getMessage() != null) {
-            sb.append("<strong>Mensaje:</strong> <code>").append(escapeHtml(cause.getMessage())).append("</code>");
+            sb.append("<strong>Mensaje:</strong> <code>").append(escapeHtml(cause.getMessage().substring(0, Math.min(300, cause.getMessage().length())))).append("</code>");
         }
         sb.append("</div>");
         return sb.toString();
@@ -375,7 +419,6 @@ public class OllamaStepListener implements StepListener {
         System.out.println("🔍 [OllamaListener] Verificando disponibilidad de Ollama...");
 
         try {
-            // Hacer una verificación rápida sin bloquear el test
             new Thread(() -> {
                 boolean available = ollamaClient.isAvailable();
                 if (available) {
@@ -392,9 +435,6 @@ public class OllamaStepListener implements StepListener {
         }
     }
 
-    /**
-     * Permite configurar el código USSD actual para contexto.
-     */
     public void setCurrentUssdCode(String ussdCode) {
         this.currentUssdCode = ussdCode;
     }
@@ -431,7 +471,6 @@ public class OllamaStepListener implements StepListener {
     @Override public void exampleFinished() {}
     @Override public void assumptionViolated(String s) {}
     @Override public void testRunFinished() {
-        // Cerrar cliente al finalizar toda la ejecución
         ollamaClient.close();
     }
 }

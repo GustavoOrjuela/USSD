@@ -2,10 +2,7 @@ package runners;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.SnippetType;
-import hooks.OllamaStepListener;
-import net.thucydides.core.steps.StepEventBus;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import utils.BeforeSuite;
 
