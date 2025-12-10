@@ -260,82 +260,244 @@ public class OllamaStepListener implements StepListener {
     }
 
     /**
-     * VERSION 2.0: HTML enriquecido con highlights específicos para textos encontrados.
+     * VERSION 2.1: Formato de tarjetas apiladas para máxima legibilidad.
+     *
+     * DISEÑO:
+     * - Estructura de tarjetas con bordes claros
+     * - Separación visual entre secciones
+     * - Headers con iconos y fondo de color
+     * - Contenido organizado en bloques
+     * - Código destacado con fondo gris
      */
     private String formatOllamaAnalysisAsHtml(String analysis, FailureContext context, long durationMs) {
         StringBuilder html = new StringBuilder();
 
-        html.append("<div style='font-family: Arial, sans-serif; padding: 15px; ")
-                .append("background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); ")
-                .append("border-radius: 8px; margin: 10px 0; color: white;'>");
+        // ═══════════════════════════════════════════════════════════
+        // CONTENEDOR PRINCIPAL
+        // ═══════════════════════════════════════════════════════════
+        html.append("<div style='font-family: Arial, sans-serif; max-width: 900px; margin: 10px 0;'>");
 
-        // Header con gradiente
-        html.append("<div style='padding: 15px; margin: -15px -15px 15px -15px;'>");
-        html.append("<h3 style='margin: 0; font-size: 20px;'>🧠 Análisis Inteligente con IA</h3>");
-        html.append("<small style='opacity: 0.9;'>Modelo: ").append(ollamaClient.getModel())
-                .append(" | Duración: ").append(String.format("%.2f", durationMs / 1000.0))
-                .append("s | ").append(context.getFormattedTimestamp()).append("</small>");
+        // ═══════════════════════════════════════════════════════════
+        // TARJETA 1: HEADER CON GRADIENTE
+        // ═══════════════════════════════════════════════════════════
+        html.append("<div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); ")
+                .append("padding: 15px; border-radius: 8px 8px 0 0; color: white; ")
+                .append("box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>");
+        html.append("<h3 style='margin: 0 0 5px 0; font-size: 18px; font-weight: 600;'>")
+                .append("🧠 Análisis Inteligente con IA</h3>");
+        html.append("<div style='font-size: 12px; opacity: 0.9;'>")
+                .append("📊 Modelo: <strong>").append(ollamaClient.getModel()).append("</strong> | ")
+                .append("⏱️ Duración: <strong>").append(String.format("%.1f", durationMs / 1000.0)).append("s</strong> | ")
+                .append("🕐 ").append(context.getFormattedTimestamp())
+                .append("</div>");
         html.append("</div>");
 
-        // Contexto del fallo
-        html.append("<div style='background-color: rgba(255,255,255,0.95); padding: 12px; ")
-                .append("border-left: 4px solid #ffc107; margin-bottom: 15px; ")
-                .append("border-radius: 4px; color: #333;'>");
-        html.append("<strong style='color: #d32f2f;'>📍 Contexto:</strong><br>");
-        html.append("<code style='background: #f5f5f5; padding: 3px 6px; border-radius: 3px;'>")
-                .append(escapeHtml(context.getStepDescription().substring(0, Math.min(150, context.getStepDescription().length()))))
-                .append("</code><br>");
+        // ═══════════════════════════════════════════════════════════
+        // TARJETA 2: CONTEXTO DEL FALLO
+        // ═══════════════════════════════════════════════════════════
+        html.append("<div style='background: #fff3cd; border-left: 5px solid #ffc107; ")
+                .append("padding: 12px 15px; margin-top: 2px;'>");
+        html.append("<div style='font-weight: 600; color: #856404; margin-bottom: 8px; font-size: 14px;'>")
+                .append("📍 CONTEXTO DEL FALLO</div>");
+
+        html.append("<div style='color: #666; font-size: 13px; margin-bottom: 6px;'>")
+                .append("<strong>Error:</strong> ").append(getSimpleErrorType(context.getErrorMessage()))
+                .append("</div>");
+
         if (context.getElementLocator() != null) {
-            html.append("<strong style='color: #1976d2;'>🎯 Elemento buscado:</strong> ")
-                    .append("<code style='background: #e3f2fd; padding: 3px 6px; border-radius: 3px; ")
-                    .append("font-weight: 600;'>").append(escapeHtml(context.getElementLocator())).append("</code>");
+            html.append("<div style='color: #666; font-size: 13px;'>")
+                    .append("<strong>Buscando:</strong> ")
+                    .append("<code style='background: #fff; padding: 2px 6px; border: 1px solid #ddd; ")
+                    .append("border-radius: 3px; font-size: 12px;'>")
+                    .append(escapeHtml(shortenLocator(context.getElementLocator())))
+                    .append("</code>")
+                    .append("</div>");
         }
         html.append("</div>");
 
-        // Análisis (convertir markdown a HTML con highlights)
-        html.append("<div style='background-color: white; padding: 15px; ")
-                .append("border-radius: 6px; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>");
-        html.append(convertMarkdownToHtmlEnhanced(analysis));
-        html.append("</div>");
+        // ═══════════════════════════════════════════════════════════
+        // TARJETA 3: CONTENIDO DEL ANÁLISIS (PARSEADO EN SECCIONES)
+        // ═══════════════════════════════════════════════════════════
+        html.append(parseAnalysisIntoCards(analysis));
 
+        // Cerrar contenedor principal
         html.append("</div>");
 
         return html.toString();
     }
 
     /**
-     * VERSION 2.0: Conversión mejorada con highlights específicos para textos entre comillas.
+     * Parsea el análisis de Ollama en tarjetas separadas por sección.
+     */
+    private String parseAnalysisIntoCards(String analysis) {
+        if (analysis == null || analysis.trim().isEmpty()) {
+            return "<div style='background: #f8f9fa; padding: 15px; text-align: center; color: #999;'>" +
+                    "Sin análisis disponible</div>";
+        }
+
+        StringBuilder cards = new StringBuilder();
+        String[] sections = analysis.split("##\\s+");
+
+        for (String section : sections) {
+            if (section.trim().isEmpty()) continue;
+
+            String[] lines = section.split("\n", 2);
+            if (lines.length < 2) continue;
+
+            String title = lines[0].trim();
+            String content = lines.length > 1 ? lines[1].trim() : "";
+
+            // Determinar icono y color según el título
+            String icon = "📄";
+            String borderColor = "#dee2e6";
+            String bgColor = "#ffffff";
+
+            if (title.toUpperCase().contains("DIAGNÓSTICO") || title.toUpperCase().contains("DIAGNOSTICO")) {
+                icon = "🔍";
+                borderColor = "#0d6efd";
+                bgColor = "#e7f3ff";
+            } else if (title.toUpperCase().contains("ELEMENTOS")) {
+                icon = "📋";
+                borderColor = "#198754";
+                bgColor = "#e8f5e9";
+            } else if (title.toUpperCase().contains("SOLUCIÓN") || title.toUpperCase().contains("SOLUCION")) {
+                icon = "✅";
+                borderColor = "#28a745";
+                bgColor = "#d4edda";
+            }
+
+            // Crear tarjeta para esta sección
+            cards.append("<div style='background: ").append(bgColor).append("; ")
+                    .append("border-left: 5px solid ").append(borderColor).append("; ")
+                    .append("padding: 15px; margin-top: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);'>");
+
+            // Header de la sección
+            cards.append("<div style='font-weight: 600; color: #333; margin-bottom: 10px; ")
+                    .append("font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;'>")
+                    .append(icon).append(" ").append(escapeHtml(title))
+                    .append("</div>");
+
+            // Contenido formateado
+            cards.append("<div style='color: #495057; font-size: 13px; line-height: 1.6;'>")
+                    .append(formatSectionContent(content))
+                    .append("</div>");
+
+            cards.append("</div>");
+        }
+
+        return cards.toString();
+    }
+
+    /**
+     * Formatea el contenido de cada sección con highlights y estructura.
+     */
+    private String formatSectionContent(String content) {
+        if (content == null) return "";
+
+        String formatted = escapeHtml(content);
+
+        // Listas numeradas con mejor formato
+        formatted = formatted.replaceAll("(\\d+)\\. ",
+                "<br><strong style='color: #495057;'>$1.</strong> ");
+
+        // Highlights en textos entre comillas
+        formatted = formatted.replaceAll("&quot;([^&]+?)&quot;",
+                "<mark style='background-color: #fff3cd; padding: 1px 4px; font-weight: 500; " +
+                        "border-radius: 2px;'>\"$1\"</mark>");
+
+        // Code blocks
+        formatted = formatted.replaceAll("`([^`]+)`",
+                "<code style='background-color: #f8f9fa; color: #e83e8c; padding: 2px 6px; " +
+                        "border-radius: 3px; font-family: Consolas, monospace; font-size: 12px; " +
+                        "border: 1px solid #e9ecef;'>$1</code>");
+
+        // Flechas indicadoras
+        formatted = formatted.replace("→",
+                "<span style='color: #0d6efd; font-weight: bold; margin: 0 4px;'>→</span>");
+
+        // Bold
+        formatted = formatted.replaceAll("\\*\\*(.*?)\\*\\*", "<strong>$1</strong>");
+
+        // Line breaks
+        formatted = formatted.replace("\n", "<br>");
+
+        // Limpiar múltiples <br> consecutivos
+        formatted = formatted.replaceAll("(<br>\\s*){3,}", "<br><br>");
+
+        return formatted;
+    }
+
+    /**
+     * Obtiene tipo de error simplificado.
+     */
+    private String getSimpleErrorType(String errorMessage) {
+        if (errorMessage == null) return "Error desconocido";
+
+        if (errorMessage.contains("NoSuchElement")) {
+            return "Elemento no encontrado";
+        } else if (errorMessage.contains("Timeout")) {
+            return "Timeout esperando elemento";
+        } else if (errorMessage.contains("StaleElement")) {
+            return "Elemento obsoleto";
+        }
+
+        return "Error de automatización";
+    }
+
+    /**
+     * Acorta localizadores muy largos para mejor visualización.
+     */
+    private String shortenLocator(String locator) {
+        if (locator == null || locator.length() <= 80) {
+            return locator;
+        }
+        return locator.substring(0, 77) + "...";
+    }
+
+
+    /**
+     * VERSION 2.1: Conversión SIMPLIFICADA para mejor legibilidad y consistencia con log.
+     *
+     * CAMBIOS v2.1:
+     * - Headers simples con color y underline limpio
+     * - Highlights amarillos suaves solo en textos clave
+     * - Code blocks con fondo gris (sin gradientes)
+     * - Listas numeradas en texto plano (sin círculos decorativos)
+     * - Formato consistente con salida de consola
      */
     private String convertMarkdownToHtmlEnhanced(String markdown) {
         if (markdown == null) return "";
 
         String html = escapeHtml(markdown);
 
-        // Headers con colores
+        // Headers simples con color (sin bordes gruesos)
         html = html.replaceAll("### (.*?)(&lt;br&gt;|\\n)",
-                "<h4 style='color: #d32f2f; margin-top: 15px; border-bottom: 2px solid #ffcdd2; padding-bottom: 5px;'>$1</h4>");
+                "<h4 style='color: #424242; margin-top: 12px; margin-bottom: 8px; " +
+                        "border-bottom: 1px solid #e0e0e0; padding-bottom: 4px;'>$1</h4>");
+
         html = html.replaceAll("## (.*?)(&lt;br&gt;|\\n)",
-                "<h3 style='color: #1976d2; margin-top: 20px; border-bottom: 3px solid #bbdefb; padding-bottom: 8px;'>$1</h3>");
+                "<h3 style='color: #1565c0; margin-top: 15px; margin-bottom: 8px; " +
+                        "border-bottom: 2px solid #e3f2fd; padding-bottom: 6px;'>$1</h3>");
 
-        // Bold
-        html = html.replaceAll("\\*\\*(.*?)\\*\\*", "<strong style='color: #d32f2f;'>$1</strong>");
+        // Bold simple (sin color adicional)
+        html = html.replaceAll("\\*\\*(.*?)\\*\\*", "<strong>$1</strong>");
 
-        // Code blocks con gradiente
+        // Code blocks simples con fondo gris
         html = html.replaceAll("`([^`]+)`",
-                "<code style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); " +
-                        "color: white; padding: 3px 8px; border-radius: 4px; font-weight: 500;'>$1</code>");
+                "<code style='background-color: #f5f5f5; color: #333; " +
+                        "padding: 2px 6px; border-radius: 3px; font-family: Consolas, monospace; " +
+                        "border: 1px solid #e0e0e0;'>$1</code>");
 
-        // ⭐ HIGHLIGHT ESPECÍFICO: Textos entre comillas (probables elementos encontrados)
+        // Highlights SIMPLES en textos entre comillas (elementos encontrados)
         html = html.replaceAll("&quot;([^&]+)&quot;",
-                "<span style='background: linear-gradient(135deg, #fff9c4 0%, #ffeb3b 100%); " +
-                        "padding: 4px 8px; border-radius: 4px; border: 2px solid #fbc02d; " +
-                        "font-weight: 600; color: #000; display: inline-block; margin: 2px;'>\"$1\"</span>");
+                "<mark style='background-color: #fff9c4; padding: 2px 4px; " +
+                        "border-radius: 2px; font-weight: 500;'>\"$1\"</mark>");
 
-        // Listas numeradas con íconos
-        html = html.replaceAll("(\\d+)\\. ",
-                "<span style='display: inline-block; width: 24px; height: 24px; background: #4caf50; " +
-                        "color: white; border-radius: 50%; text-align: center; line-height: 24px; " +
-                        "margin-right: 8px; font-size: 14px;'>$1</span>");
+        // Listas numeradas SIMPLES (sin círculos, solo bold)
+        html = html.replaceAll("(\\d+)\\. ", "<strong>$1.</strong> ");
+
+        // Flechas para indicadores
+        html = html.replace("→", "<span style='color: #1976d2; font-weight: bold;'>→</span>");
 
         // Line breaks
         html = html.replace("\n", "<br>");
