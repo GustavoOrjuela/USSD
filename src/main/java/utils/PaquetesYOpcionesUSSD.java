@@ -99,9 +99,9 @@ public class PaquetesYOpcionesUSSD {
     );
 
     public static final List<String> MenuPaquetesRelevoComunidad = Arrays.asList(
-            "1. $7500 Relevo SMS Ilimitados+WFX+800MB 7Dias",
-            "2. $15500 Relevo SMS Ilimitados+WFX+2.5GB 15Dias",
-            "3. $30500 Relevo SMS Ilimitados+WFX+6GB 30Dias",
+            "1. $8000 Relevo SMS Ilimitados+WFX+800MB 7Dias",
+            "2. $16500 Relevo SMS Ilimitados+WFX+2.5GB 15Dias",
+            "3. $31500 Relevo SMS Ilimitados+WFX+6GB 30Dias",
             "0. Atras"
     );
 
