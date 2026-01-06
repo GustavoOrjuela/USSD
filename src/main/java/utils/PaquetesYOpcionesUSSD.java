@@ -39,11 +39,11 @@ public class PaquetesYOpcionesUSSD {
     );
 
     public static final List<String> MenuPaquetesTodoIncluido = Arrays.asList(
-            "1. $4500 3 Dias 400MB+WFX+Voz",
-            "2. $7500 6 Dias 1.4GB+WFX+Voz",
-            "3. $8500 7 Dias 2GB+WFX+Voz",
-            "4. $12000 7 Dias 10GB+Voz",
-            "5. $22000 20 Dias 7.5GB+WFX+Voz",
+            "1. $5000 3 Dias 400MB+WFX+Voz",
+            "2. $8000 6 Dias 1.4GB+WFX+Voz",
+            "3. $9000 7 Dias 2GB+WFX+Voz",
+            "4. $13000 7 Dias 10GB+Voz",
+            "5. $23000 20 Dias 7.5GB+WFX+Voz",
             "9. Mas",
             "0. Atras"
     );
