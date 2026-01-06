@@ -9,8 +9,7 @@ import net.serenitybdd.screenplay.rest.abiities.CallAnApi;
 import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.By;
-import hooks.OllamaStepListener;
-import net.thucydides.core.steps.StepEventBus;
+import utils.MyDriver;
 
 import static net.serenitybdd.screenplay.actors.OnStage.theActorCalled;
 
@@ -21,22 +20,9 @@ public class BeforeHook {
   @Before
   public void initScenario(Scenario scenario) {
     // ================================
-    // 🔹 Cerrar popup automático
+    // 🔹 Cerrar popups al inicio
     // ================================
-    try {
-      AndroidDriver driver = MyDriver.get();
-
-      if (driver != null) {
-
-        if (driver.findElements(By.xpath("//*[@text='Aceptar']")).size() > 0) {
-          driver.findElement(By.xpath("//*[@text='Cancelar']")).click();
-          System.out.println("📌 Popup de Claro detectado y cerrado automáticamente.");
-        }
-      }
-
-    } catch (Exception e) {
-      // Silencioso: no debe interrumpir la ejecución
-    }
+    cerrarPopupsIniciales();
 
     // ================================
     // 🔹 Logs de inicio
@@ -45,23 +31,66 @@ public class BeforeHook {
     LOGGER.info("[ Start stage ] --> " + scenario.getName());
     LOGGER.info("************************************************************************************************");
 
-    // ================================
-    // 🔹 Inicializar Screenplay
-    // ================================
     OnStage.setTheStage(new OnlineCast());
   }
 
-  // ================================
-  // 🔹 Config API (si se usa)
-  // ================================
+  /**
+   * Cierra todos los popups que puedan estar presentes al inicio del escenario.
+   */
+  private void cerrarPopupsIniciales() {
+    try {
+      AndroidDriver driver = MyDriver.get();
+      if (driver == null) {
+        return;
+      }
+
+      System.out.println("🔍 [BeforeHook] Verificando popups iniciales...");
+
+      // 1️⃣ Popup de Claro
+      try {
+        if (driver.findElements(By.xpath("//*[@text='Aceptar']")).size() > 0) {
+          driver.findElement(By.xpath("//*[@text='Cancelar']")).click();
+          System.out.println("📌 [BeforeHook] Popup de Claro cerrado");
+          Thread.sleep(500);
+        }
+      } catch (Exception e) {
+        // Silencioso
+      }
+
+      // 2️⃣ Error USSD previo
+      try {
+        if (!driver.findElements(By.xpath("//*[@text='Problema de conexión o código incorrecto']")).isEmpty()) {
+          driver.findElement(By.xpath("//*[@text='Aceptar']")).click();
+          System.out.println("📌 [BeforeHook] Error USSD cerrado");
+          Thread.sleep(500);
+        }
+      } catch (Exception e) {
+        // Silencioso
+      }
+
+      // 3️⃣ Cancelar USSD previo
+      try {
+        if (!driver.findElements(By.xpath("//*[@text='Cancelar']")).isEmpty()) {
+          driver.findElement(By.xpath("//*[@text='Cancelar']")).click();
+          System.out.println("📌 [BeforeHook] USSD previo cerrado");
+          Thread.sleep(500);
+        }
+      } catch (Exception e) {
+        // Silencioso
+      }
+
+      System.out.println("✅ [BeforeHook] Verificación de popups completada");
+
+    } catch (Exception e) {
+      System.err.println("⚠️ [BeforeHook] Error verificando popups: " + e.getMessage());
+    }
+  }
+
   public static void prepareStage(String urlBase) {
     OnStage.setTheStage(new OnlineCast());
     theActorCalled("Usuario").whoCan(CallAnApi.at(urlBase));
   }
 
-  // ================================
-  // 🔹 Logs final escenario
-  // ================================
   @After
   public void endScenario(Scenario scenario) {
     LOGGER.info("************************************************************************************************");
