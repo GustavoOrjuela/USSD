@@ -76,11 +76,11 @@ public class PaquetesYOpcionesUSSD {
     );
 
     public static final List<String> MenuPaquetesLargaDuracion = Arrays.asList(
-            "1. $12000 10 Dias 3.5GB+WFX+Voz",
-            "2. $32000 30 Dias 12GB+WFX+Voz",
-            "3. $42000 30 Dias 18GB+WFX+Voz",
-            "4. $22000 15 Dias 20GB+Voz",
-            "5. $32000 30 Dias 30GB+Voz",
+            "1. $13000 10 Dias 3.5GB+WFX+Voz",
+            "2. $33000 30 Dias 12GB+WFX+Voz",
+            "3. $43000 30 Dias 18GB+WFX+Voz",
+            "4. $23000 15 Dias 20GB+Voz",
+            "5. $33000 30 Dias 30GB+Voz",
             "9. Mas",
             "0. Atras"
     );
