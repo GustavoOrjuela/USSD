@@ -23,11 +23,11 @@ public class PaquetesYOpcionesUSSD {
     );
 
     public static final List<String> MenuPaquetesDatos = Arrays.asList(
-            "1. $1500 1Dia 200MB Nav+WhatsApp",
-            "2. $2500 1Dia 400MB Nav+WFX",
-            "3. $4500 3Dias 800MB Nav+WFX",
-            "4. $5500 2Horas Nav Ilimitada",
-            "5. $7500 7Dias 2GB Nav+WFX",
+            "1. $2000 1Dia 200MB Nav+WhatsApp",
+            "2. $3000 1Dia 400MB Nav+WFX",
+            "3. $5000 3Dias 800MB Nav+WFX",
+            "4. $6000 2Horas Nav Ilimitada",
+            "5. $8000 7Dias 2GB Nav+WFX",
             "0. Atras"
     );
 
@@ -39,11 +39,11 @@ public class PaquetesYOpcionesUSSD {
     );
 
     public static final List<String> MenuPaquetesTodoIncluido = Arrays.asList(
-            "1. $4500 3 Dias 400MB+WFX+Voz",
-            "2. $7500 6 Dias 1.4GB+WFX+Voz",
-            "3. $8500 7 Dias 2GB+WFX+Voz",
-            "4. $12000 7 Dias 10GB+Voz",
-            "5. $22000 20 Dias 7.5GB+WFX+Voz",
+            "1. $5000 3 Dias 400MB+WFX+Voz",
+            "2. $8000 6 Dias 1.4GB+WFX+Voz",
+            "3. $9000 7 Dias 2GB+WFX+Voz",
+            "4. $13000 7 Dias 10GB+Voz",
+            "5. $23000 20 Dias 7.5GB+WFX+Voz",
             "9. Mas",
             "0. Atras"
     );
@@ -76,19 +76,19 @@ public class PaquetesYOpcionesUSSD {
     );
 
     public static final List<String> MenuPaquetesLargaDuracion = Arrays.asList(
-            "1. $12000 10 Dias 3.5GB+WFX+Voz",
-            "2. $32000 30 Dias 12GB+WFX+Voz",
-            "3. $42000 30 Dias 18GB+WFX+Voz",
-            "4. $22000 15 Dias 20GB+Voz",
-            "5. $32000 30 Dias 30GB+Voz",
+            "1. $13000 10 Dias 3.5GB+WFX+Voz",
+            "2. $33000 30 Dias 12GB+WFX+Voz",
+            "3. $43000 30 Dias 18GB+WFX+Voz",
+            "4. $23000 15 Dias 20GB+Voz",
+            "5. $33000 30 Dias 30GB+Voz",
             "9. Mas",
             "0. Atras"
     );
 
     public static final List<String> MenuPaquetesEspeciales = Arrays.asList(
             "1. $100000 30 Dias 80GB+WFX+Voz",
-            "2. $8500 6 Dias 1.4GB+WFX+Salud en linea 4 beneficiarios",
-            "3. $5500 3 Dias 400MB+WFX+Salud en linea 4 beneficiarios",
+            "2. $9000 6 Dias 1.4GB+WFX+Salud en linea 4 beneficiarios",
+            "3. $6000 3 Dias 400MB+WFX+Salud en linea 4 beneficiarios",
             "0. Atras"
     );
 
@@ -99,9 +99,9 @@ public class PaquetesYOpcionesUSSD {
     );
 
     public static final List<String> MenuPaquetesRelevoComunidad = Arrays.asList(
-            "1. $7500 Relevo SMS Ilimitados+WFX+800MB 7Dias",
-            "2. $15500 Relevo SMS Ilimitados+WFX+2.5GB 15Dias",
-            "3. $30500 Relevo SMS Ilimitados+WFX+6GB 30Dias",
+            "1. $8000 Relevo SMS Ilimitados+WFX+800MB 7Dias",
+            "2. $16500 Relevo SMS Ilimitados+WFX+2.5GB 15Dias",
+            "3. $31500 Relevo SMS Ilimitados+WFX+6GB 30Dias",
             "0. Atras"
     );
 
