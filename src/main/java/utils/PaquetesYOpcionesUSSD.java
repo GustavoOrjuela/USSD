@@ -23,11 +23,11 @@ public class PaquetesYOpcionesUSSD {
     );
 
     public static final List<String> MenuPaquetesDatos = Arrays.asList(
-            "1. $1500 1Dia 200MB Nav+WhatsApp",
-            "2. $2500 1Dia 400MB Nav+WFX",
-            "3. $4500 3Dias 800MB Nav+WFX",
-            "4. $5500 2Horas Nav Ilimitada",
-            "5. $7500 7Dias 2GB Nav+WFX",
+            "1. $2000 1Dia 200MB Nav+WhatsApp",
+            "2. $3000 1Dia 400MB Nav+WFX",
+            "3. $5000 3Dias 800MB Nav+WFX",
+            "4. $6000 2Horas Nav Ilimitada",
+            "5. $8000 7Dias 2GB Nav+WFX",
             "0. Atras"
     );
 
