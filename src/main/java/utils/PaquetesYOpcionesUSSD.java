@@ -87,8 +87,8 @@ public class PaquetesYOpcionesUSSD {
 
     public static final List<String> MenuPaquetesEspeciales = Arrays.asList(
             "1. $100000 30 Dias 80GB+WFX+Voz",
-            "2. $8500 6 Dias 1.4GB+WFX+Salud en linea 4 beneficiarios",
-            "3. $5500 3 Dias 400MB+WFX+Salud en linea 4 beneficiarios",
+            "2. $9000 6 Dias 1.4GB+WFX+Salud en linea 4 beneficiarios",
+            "3. $6000 3 Dias 400MB+WFX+Salud en linea 4 beneficiarios",
             "0. Atras"
     );
 
