@@ -124,9 +124,9 @@ public class PaquetesYOpcionesUSSD {
     );
 
     public static final List<String> MenuPaquetesVoz = Arrays.asList(
-            "1. $2000 1 dia 300 Minutos",
-            "2. $2500 2 dias 300 Minutos",
-            "3. $16500 20 dias 1000 Minutos",
+            "1. $2500 1 dia 300 Minutos",
+            "2. $3000 2 dias 300 Minutos",
+            "3. $17500 20 dias 1000 Minutos",
             "0. Atras"
     );
 
