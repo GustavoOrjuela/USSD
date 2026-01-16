@@ -86,7 +86,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Ingreso la opcion "1" para medios de pago
     And Valida Menu Medios De Pago De Paquetes De Datos
 
-  @USSD_08 @Recargas @USSDPRE
+  @USSD_008 @Recargas @USSDPRE
   Scenario: Compra de recargas - paquetes todo incluido
     Given Se realiza la llamada al numero *611#
     When Valida Menu Inicio
@@ -95,7 +95,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Ingreso la opcion "1" para paquetes todo incluido
     And Valida Menu Medios De Pago Recarga
 
-  @USSD_09 @Recargas @USSDPRE
+  @USSD_009 @Recargas @USSDPRE
   Scenario: Compra de recargas - mas opciones de recargas 1
     Given Se realiza la llamada al numero *611#
     When Valida Menu Inicio

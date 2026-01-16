@@ -13,7 +13,7 @@ import java.io.IOException;
         glue = {"stepDefinitions", "utils", "hooks"},
         plugin = {"pretty"},
         snippets = SnippetType.CAMELCASE,
-        tags = "@USSD_001"
+        tags = "@USSD_007"
 )
 
 @RunWith(CustomRunner.class)
