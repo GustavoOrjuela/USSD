@@ -13,6 +13,7 @@ import interactions.wait.WaitFor;
 import net.serenitybdd.screenplay.actions.Click;
 import net.serenitybdd.screenplay.actors.OnStage;
 import net.serenitybdd.screenplay.actors.OnlineCast;
+import tasks.CerrarErrorServidor;
 import tasks.RealizarLlamada;
 import utils.EvidenciaUtils;
 import utils.WordAppium;
@@ -65,6 +66,7 @@ public class USSDSteps {
         System.out.println("📞 Iniciando llamada USSD al número: " + numero);
 
         theActorCalled(ACTOR_NAME).attemptsTo(
+                CerrarErrorServidor.siEstaPresente(),
                 RealizarLlamada.alNumero(numero)
         );
 

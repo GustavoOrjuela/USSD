@@ -3,6 +3,7 @@ package userinterfaces;
 import io.appium.java_client.MobileBy;
 import net.serenitybdd.core.pages.PageObject;
 import net.serenitybdd.screenplay.targets.Target;
+import org.openqa.selenium.By;
 
 public class USSDPage extends PageObject {
 
@@ -84,6 +85,15 @@ public class USSDPage extends PageObject {
     public static final Target BTN_CANCELAR =
             Target.the("Botón Cancelar")
                     .located(MobileBy.id("android:id/button2"));
+
+
+    public static final Target TXT_SERVER_ERROR =
+            Target.the("Mensaje server error")
+                    .located(By.xpath("//*[contains(@text,'Server error')]"));
+
+    public static final Target BTN_ACEPTAR_ERROR =
+            Target.the("Boton aceptar error")
+                    .located(By.xpath("//*[@text='Aceptar']"));
 
 }
 
