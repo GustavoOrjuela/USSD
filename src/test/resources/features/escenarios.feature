@@ -73,7 +73,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Ingreso la opcion "1" para medios de pago de paquetes de relevo
     And Valida Menu Medios De Pago De Paquetes Todo Incluido Con PSE
 
-  @USSD_007
+
   Scenario: Compra de paquetes - paquetes todo incluido 5
     Given Se realiza la llamada al numero *611#
     When Valida Menu Inicio
@@ -121,12 +121,12 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
 
 
   @USSD_011
-  Scenario: Consulta de saldos y consumos ver saldo y comprar paquete y recargas
+  Scenario: Consulta de saldos y consumos ver saldo y numero
     Given Se realiza la llamada al numero *611#
     When Valida Menu Inicio
     And Ingreso la opcion "3" para consulta de saldo y consumos
     And Valida Menu Beneficios 3x1
-    And Ingreso la opcion "1" para ver saldo y comprar paquete y recargas
+    And Ingreso la opcion "1" para ver saldo y numero
     And Valida Menu Beneficios 3x1 Consulta
     And Ingreso la opcion "1" para comprar tu paquete
     And Valida Menu Principal Paquetes

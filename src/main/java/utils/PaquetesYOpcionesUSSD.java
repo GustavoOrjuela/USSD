@@ -204,8 +204,7 @@ public class PaquetesYOpcionesUSSD {
     public static final List<String> MenuPrincipalPaquetes = Arrays.asList(
             "1. Paquete de Datos",
             "2. Paquete Todo Incluido",
-            "3. Paquete Relevo comunidad sorda",
-            "4. Paquete de Voz",
+            "3. Paquete de Voz",
             "0. Atras"
     );
 
