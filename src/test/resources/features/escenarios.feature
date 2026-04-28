@@ -160,6 +160,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Recargas Mas
     And Ingreso la opcion "9" para opciones de recarga altos
     And Valida Menu Recarga Valores Altos
+    Then Cancelar
 
   @USSD_014
   Scenario: Consulta de saldos y consumos - Consultar consumo

@@ -25,6 +25,20 @@ public class PopupHandler {
 
         try {
             AndroidDriver driver = MyDriver.get();
+            if (driver != null) {
+                // Verificar si está visible el botón "Aceptar" del popup
+                if (driver.findElements(By.xpath("//*[@text='Problema de conexión o código MMI incorrecto.']")).size() > 0) {
+                    // Presionar "Aceptar" para cerrarlo
+                    driver.findElement(By.xpath("//*[@text='Aceptar']")).click();
+                    System.out.println("📌 Popup de Claro MMI detectado y cerrado automáticamente (post-step).");
+                }
+            }
+        } catch (Exception e) {
+            // Silencioso: no debe interrumpir la ejecución
+        }
+
+        try {
+            AndroidDriver driver = MyDriver.get();
             if (driver != null && !driver.findElements(By.xpath("//*[@text='Cancelar']")).isEmpty()) {
                 driver.findElement(By.xpath("//*[@text='Cancelar']")).click();
                 System.out.println("📌 Pantalla USSD cerrada automáticamente al finalizar el escenario");
