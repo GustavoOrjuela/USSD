@@ -8,6 +8,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     Then Valida Menu Compra De Paquetes
     When Ingreso la opcion "1" para el paquete mas vendido
     Then Valida Menu Medios De Pago De Paquetes El Mas vendido
+    Then Cancelar
 
 
   @USSD_002
@@ -20,6 +21,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Op De Paquetes De Datos
     And Ingreso la opcion "1" para medios de pago
     And Valida Menu Medios De Pago De Paquetes De Datos
+    Then Cancelar
 
   @USSD_003
   Scenario: Compra de paquetes - paquetes todo incluido 1
@@ -31,6 +33,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Paquetes Todo Incluido
     And Ingreso la opcion "1" para medios de pago
     And Valida Menu Medios De Pago De Paquetes Todo Incluido
+    Then Cancelar
 
   @USSD_004
   Scenario: Compra de paquetes - paquetes todo incluido 2
@@ -44,6 +47,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Mas Paquetes Todo Incluido
     And Ingreso la opcion "1" para ver medios de pago
     And Valida Menu Medios De Pago De Paquetes Todo Incluido Con PSE
+    Then Cancelar
 
   @USSD_005
   Scenario: Compra de paquetes - paquetes todo incluido 3
@@ -59,6 +63,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Mas Mas Paquetes Todo Incluido
     And Ingreso la opcion "1" para ver medios de pago
     And Valida Menu Medios De Pago De Paquetes Todo Incluido Con PSE
+    Then Cancelar
 
 
   Scenario: Compra de paquetes - paquetes todo incluido 4
@@ -94,6 +99,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Recargas
     And Ingreso la opcion "1" para paquetes todo incluido
     And Valida Menu Medios De Pago Recarga
+    Then Cancelar
 
   @USSD_009
   Scenario: Compra de recargas - mas opciones de recargas 1
@@ -105,6 +111,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Recargas Mas
     And Ingreso la opcion "1" para medios de pago
     And Valida Menu Medios De Pago Recarga Con Tarjeta
+    Then Cancelar
 
   @USSD_010
   Scenario: Compra de recargas - mas opciones de recargas 2
@@ -118,6 +125,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Recarga Valores Altos
     And Ingreso la opcion "1" para medios de pago
     And Valida Menu Medios De Pago Recarga Con PSE
+    Then Cancelar
 
 
   @USSD_011
@@ -130,6 +138,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Beneficios 3x1 Consulta
     And Ingreso la opcion "1" para comprar tu paquete
     And Valida Menu Principal Paquetes
+    Then Cancelar
 
   @USSD_012
   Scenario: Consulta de saldos y consumos mas opciones de recarga
@@ -145,6 +154,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Recargas Mas
     And Ingreso la opcion "9" para opciones de recarga altos
     And Valida Menu Recarga Valores Altos
+    Then Cancelar
 
   @USSD_013
   Scenario: Consulta de saldos y consumos - Ver opciones de paquetes despues de conusltar saldo
@@ -182,3 +192,4 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Autorizacion Datos
     And Ingreso la opcion "1" para aceptar y ver tipos de documento
     And Valida Menu Tipo Documento
+    Then Cancelar
