@@ -210,7 +210,6 @@ public class PaquetesYOpcionesUSSD {
 
     public static final List<String> ValidaMenuDetalleSinoHayUnPaquete = Arrays.asList(
             "No cuentas con paquetes vigentes",
-
             "1. Compra tu paquete",
             "2. Compra tu Recarga"
 

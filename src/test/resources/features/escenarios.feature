@@ -172,7 +172,8 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Detalle Si no Hay Un Paquete
     #And Ingreso la opcion "1" para consultar consumo de paquete y vigencia
     #And Valida Menu Detalle De Consumo
-
+    Then Cancelar
+    
   @USSD_015
   Scenario: Activacion de Linea
     Given Se realiza la llamada al numero *611#
