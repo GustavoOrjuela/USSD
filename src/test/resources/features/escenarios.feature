@@ -8,7 +8,6 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     Then Valida Menu Compra De Paquetes
     When Ingreso la opcion "1" para el paquete mas vendido
     Then Valida Menu Medios De Pago De Paquetes El Mas vendido
-    Then Cancelar
 
 
   @USSD_002
@@ -21,7 +20,6 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Op De Paquetes De Datos
     And Ingreso la opcion "1" para medios de pago
     And Valida Menu Medios De Pago De Paquetes De Datos
-    Then Cancelar
 
   @USSD_003
   Scenario: Compra de paquetes - paquetes todo incluido 1
@@ -33,7 +31,6 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Paquetes Todo Incluido
     And Ingreso la opcion "1" para medios de pago
     And Valida Menu Medios De Pago De Paquetes Todo Incluido
-    Then Cancelar
 
   @USSD_004
   Scenario: Compra de paquetes - paquetes todo incluido 2
@@ -63,7 +60,6 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Mas Mas Paquetes Todo Incluido
     And Ingreso la opcion "1" para ver medios de pago
     And Valida Menu Medios De Pago De Paquetes Todo Incluido Con PSE
-    Then Cancelar
 
 
   Scenario: Compra de paquetes - paquetes todo incluido 4
@@ -192,4 +188,3 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Autorizacion Datos
     And Ingreso la opcion "1" para aceptar y ver tipos de documento
     And Valida Menu Tipo Documento
-    Then Cancelar
