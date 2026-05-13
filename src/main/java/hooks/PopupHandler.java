@@ -56,5 +56,15 @@ public class PopupHandler {
         } catch (Exception e) {
             System.out.println("⚠️ No se pudo cerrar el USSD: " + e.getMessage());
         }
+
+        try {
+            AndroidDriver driver = MyDriver.get();
+            if (driver != null && !driver.findElements(By.xpath("//*[@text='SIM Claro']")).isEmpty()) {
+                driver.findElement(By.xpath("//*[@text='Cancelar']")).click();
+                System.out.println("📌 Pantalla de error de código USSD cerrada automáticamente al finalizar el escenario");
+            }
+        } catch (Exception e) {
+            System.out.println("⚠️ No se pudo cerrar el USSD: " + e.getMessage());
+        }
     }
 }
