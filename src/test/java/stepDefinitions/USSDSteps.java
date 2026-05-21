@@ -15,6 +15,7 @@ import net.serenitybdd.screenplay.actors.OnStage;
 import net.serenitybdd.screenplay.actors.OnlineCast;
 import tasks.CerrarErrorServidor;
 import tasks.RealizarLlamada;
+import tasks.ValidarRespuesta;
 import utils.EvidenciaUtils;
 import utils.WordAppium;
 
@@ -266,8 +267,9 @@ public class USSDSteps {
     public void ValidaMenuDetalleTodoIncluido() {
         System.out.println("🔍 Verificando Menu Detalle Todo Incluido");
 
+        System.out.println("🔍 Validando respuesta del sistema USSD");
         theActorCalled(ACTOR_NAME).attemptsTo(
-                ValidarTextosQueContenganArrays.validarTexto(ValidaMenuDetalleSinoHayUnPaquete)
+                ValidarRespuesta.enPantalla()
         );
 
         System.out.println("✅ Información de Menu Detalle Todo Incluido correctamente");
@@ -332,8 +334,7 @@ public class USSDSteps {
         theActorCalled(ACTOR_NAME).attemptsTo(
                 ValidarTextosQueContenganArrays.validarTexto(MenuMediosDePagoPaquetesTodoIncluido), // ✅ SIN paréntesis
                 Click.on(BTN_CANCELAR),
-                WaitFor.aTime(30000)
-        );
+                WaitFor.aTime(30000));
 
         System.out.println("✅ Información de Menu Inicio correctamente");
 

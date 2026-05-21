@@ -130,7 +130,6 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Beneficios 3x1 Consulta
     And Ingreso la opcion "1" para comprar tu paquete
     And Valida Menu Principal Paquetes
-    Then Cancelar
 
   @USSD_012
   Scenario: Consulta de saldos y consumos mas opciones de recarga

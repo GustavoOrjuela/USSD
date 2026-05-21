@@ -185,7 +185,7 @@ public class PaquetesYOpcionesUSSD {
     );
 
     public static final List<String> MenuBeneficios3x1 = Arrays.asList(
-            "Recibe 3x1 en datos y minutos comprando con Nequi, Daviplata PSE o Tarjeta",
+            "Recibe 3x1 en datos y minutos comprando con Nequi, PSE o Tarjeta",
             "1. Consulta de saldo y numero",
             "2. Consulta consumo de paquete",
             "0. Atras"
@@ -235,5 +235,8 @@ public class PaquetesYOpcionesUSSD {
             "4. Pasaporte"
     );
 
-
+    public static final List<String> PaqueteVigente = Arrays.asList(
+            "Selecciona para ver detalle:",
+            "1. Todo Incluido 30 dias 18GB"
+    );
 }
