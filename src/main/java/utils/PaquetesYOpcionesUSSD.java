@@ -193,7 +193,7 @@ public class PaquetesYOpcionesUSSD {
 
     // Array estático con los textos que quieres validar
     public static final List<String> MenuBeneficios3x1Consulta = Arrays.asList(
-            "Recibe 3x1 en datos y minutos comprando con Nequi, Daviplata PSE o Tarjeta",
+            "Recibe 3x1 en datos y minutos comprando con Nequi, PSE o Tarjeta",
             "Linea:",
             "Saldo:",
             "Vigencia:",
