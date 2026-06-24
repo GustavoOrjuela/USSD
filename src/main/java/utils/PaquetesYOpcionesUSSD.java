@@ -84,10 +84,10 @@ public class PaquetesYOpcionesUSSD {
     );
 
     public static final List<String> MenuPaquetesEspeciales = Arrays.asList(
-            "1. $13000 10 Dias 3.5GB+WFX+Voz",
-            "2. $33000 30 Dias 12GB+WFX+Voz",
-            "3. $43000 30 Dias 18GB+WFX+Voz",
-            "4. $23000 15 Dias 20GB+Voz",
+            "1. $13000 7 Dias 10GB+Voz",
+            "2. $15000 10 Dias 3.5GB Win+",
+            "3. $15000 7 Dias 10GB Win+",
+            "4. $100000 30 Dias 80GB+WFX+Voz",
             "9. Mas",
             "0. Atras"
     );
