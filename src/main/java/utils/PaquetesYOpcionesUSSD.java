@@ -78,7 +78,7 @@ public class PaquetesYOpcionesUSSD {
             "1. $13000 7 Dias 10GB+Voz",
             "2. $15000 10 dias 3.5GB Win+",
             "3. $15000 7 dias 10GB Win+",
-            "4. $23000 20 Dias 7.5GB+WFX+Voz",
+            "4. $100000 30 Dias 80GB+WFX+Voz",
             "9. Mas",
             "0. Atras"
     );
