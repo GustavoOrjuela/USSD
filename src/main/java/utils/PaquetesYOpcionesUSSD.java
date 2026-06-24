@@ -27,7 +27,7 @@ public class PaquetesYOpcionesUSSD {
             "2. $3000 1Dia 400MB Nav+WFX",
             "3. $5000 3Dias 800MB Nav+WFX",
             "4. $6000 2Horas Nav Ilimitada",
-            "5. $8000 7Dias 2GB Nav+WFX",
+            "9. Mas",
             "0. Atras"
     );
 
@@ -42,8 +42,7 @@ public class PaquetesYOpcionesUSSD {
             "1. $5000 3 Dias 400MB+WFX+Voz",
             "2. $8000 6 Dias 1.4GB+WFX+Voz",
             "3. $9000 7 Dias 2GB+WFX+Voz",
-            "4. $13000 7 Dias 10GB+Voz",
-            "5. $23000 20 Dias 7.5GB+WFX+Voz",
+            "4. $11000 7 dias 2GB Win+",
             "9. Mas",
             "0. Atras"
     );
@@ -76,19 +75,20 @@ public class PaquetesYOpcionesUSSD {
     );
 
     public static final List<String> MenuPaquetesLargaDuracion = Arrays.asList(
-            "1. $13000 10 Dias 3.5GB+WFX+Voz",
-            "2. $33000 30 Dias 12GB+WFX+Voz",
-            "3. $43000 30 Dias 18GB+WFX+Voz",
-            "4. $23000 15 Dias 20GB+Voz",
-            "5. $33000 30 Dias 30GB+Voz",
+            "1. $13000 7 Dias 10GB+Voz",
+            "2. $15000 10 dias 3.5GB Win+",
+            "3. $15000 7 dias 10GB Win+",
+            "4. $23000 20 Dias 7.5GB+WFX+Voz",
             "9. Mas",
             "0. Atras"
     );
 
     public static final List<String> MenuPaquetesEspeciales = Arrays.asList(
-            "1. $100000 30 Dias 80GB+WFX+Voz",
-            "2. $9000 6 Dias 1.4GB+WFX+Salud en linea 4 beneficiarios",
-            "3. $6000 3 Dias 400MB+WFX+Salud en linea 4 beneficiarios",
+            "1. $13000 10 Dias 3.5GB+WFX+Voz",
+            "2. $33000 30 Dias 12GB+WFX+Voz",
+            "3. $43000 30 Dias 18GB+WFX+Voz",
+            "4. $23000 15 Dias 20GB+Voz",
+            "9. Mas",
             "0. Atras"
     );
 
@@ -136,7 +136,6 @@ public class PaquetesYOpcionesUSSD {
             "2. $2000",
             "3. $3000",
             "4. $4000",
-            "5. $5000",
             "9. Mas",
             "0. Atras"
     );
@@ -150,11 +149,10 @@ public class PaquetesYOpcionesUSSD {
     // Array estático con los textos que quieres validar
     public static final List<String> MenuRecargasMas = Arrays.asList(
             "Compra tu recarga. Vigencia 60 dias",
-            "1. $6000",
-            "2. $7000",
-            "3. $8000",
-            "4. $9000",
-            "5. $10000",
+            "1. $5000",
+            "2. $6000",
+            "3. $7000",
+            "4. $8000",
             "9. Mas",
             "0. Atras"
     );
@@ -168,19 +166,19 @@ public class PaquetesYOpcionesUSSD {
 
     public static final List<String> MenuRecargaValoresAltos = Arrays.asList(
             "Compra tu recarga. Vigencia 60 dias",
-            "1. $12000",
-            "2. $15000",
-            "3. $20000",
-            "4. $30000",
-            "5. $50000",
+            "1. $9000",
+            "2. $10000",
+            "3. $12000",
+            "4. $15000",
+            "9. Mas",
             "0. Atras"
     );
 
     public static final List<String> MenuMediosDePagoRecargaConPSE = Arrays.asList(
             "Selecciona el medio de pago para tu recarga:",
             "1. Tarjeta de Credito",
-            "2. Nequi",
-            "3. PSE",
+            "2. PSE",
+            "3. Nequi",
             "0. Atras"
     );
 
