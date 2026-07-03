@@ -78,16 +78,16 @@ public class PaquetesYOpcionesUSSD {
             "1. $13000 7 Dias 10GB+Voz",
             "2. $15000 10 dias 3.5GB Win+",
             "3. $15000 7 dias 10GB Win+",
-            "4. $100000 30 Dias 80GB+WFX+Voz",
+            "4. $25000 15 dias 20GB Win+",
             "9. Mas",
             "0. Atras"
     );
 
     public static final List<String> MenuPaquetesEspeciales = Arrays.asList(
-            "1. $13000 7 Dias 10GB+Voz",
-            "2. $15000 10 Dias 3.5GB Win+",
-            "3. $15000 7 Dias 10GB Win+",
-            "4. $100000 30 Dias 80GB+WFX+Voz",
+            "1. $25000 20 dias 7.5GB Win+",
+            "2. $35000 30 dias 12GB Win+",
+            "3. $35000 30 dias 30GB Win+",
+            "4. $9000 6 Dias 1.4GB+WFX+Salud",
             "9. Mas",
             "0. Atras"
     );
