@@ -21,7 +21,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Ingreso la opcion "1" para medios de pago
     And Valida Menu Medios De Pago De Paquetes De Datos
 
-  @USSD_003 @prueba
+  @USSD_003 
   Scenario: Compra de paquetes - paquetes todo incluido 1
     Given Se realiza la llamada al numero *611#
     When Valida Menu Inicio
@@ -32,7 +32,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Ingreso la opcion "1" para medios de pago
     And Valida Menu Medios De Pago De Paquetes Todo Incluido
 
-  @USSD_004 @prueba
+  @USSD_004 
   Scenario: Compra de paquetes - paquetes todo incluido 2
     Given Se realiza la llamada al numero *611#
     When Valida Menu Inicio
@@ -45,7 +45,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Ingreso la opcion "1" para ver medios de pago
     And Valida Menu Medios De Pago De Paquetes Todo Incluido Con PSE
 
-  @USSD_005 @prueba
+  @USSD_005 
   Scenario: Compra de paquetes - paquetes todo incluido 3
     Given Se realiza la llamada al numero *611#
     When Valida Menu Inicio
@@ -106,7 +106,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Ingreso la opcion "1" para medios de pago
     And Valida Menu Medios De Pago Recarga Con Tarjeta
 
-  @USSD_010 @prueba
+  @USSD_010 
   Scenario: Compra de recargas - mas opciones de recargas 2
     Given Se realiza la llamada al numero *611#
     When Valida Menu Inicio
@@ -147,7 +147,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Recarga Valores Altos
     Then Cancelar
 
-  @USSD_013 @prueba
+  @USSD_013 
   Scenario: Consulta de saldos y consumos - Ver opciones de paquetes despues de conusltar saldo
     Given Se realiza la llamada al numero *611#
     When Valida Menu Inicio
