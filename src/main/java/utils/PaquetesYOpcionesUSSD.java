@@ -42,7 +42,7 @@ public class PaquetesYOpcionesUSSD {
             "1. $5000 3 Dias 400MB+WFX+Voz",
             "2. $8000 6 Dias 1.4GB+WFX+Voz",
             "3. $9000 7 Dias 2GB+WFX+Voz",
-            "4. $11000 7 dias 2GB Win+",
+            "4. $11000 7 dias 2GB WinSport",
             "9. Mas",
             "0. Atras"
     );
@@ -76,18 +76,18 @@ public class PaquetesYOpcionesUSSD {
 
     public static final List<String> MenuPaquetesLargaDuracion = Arrays.asList(
             "1. $13000 7 Dias 10GB+Voz",
-            "2. $15000 10 dias 3.5GB Win+",
-            "3. $15000 7 dias 10GB Win+",
-            "4. $25000 15 dias 20GB Win+",
+            "2. $15000 10 dias 3.5GB WinSport",
+            "3. $15000 7 dias 10GB WinSport",
+            "4. $25000 15 dias 20GB WinSport",
             "9. Mas",
             "0. Atras"
     );
 
     public static final List<String> MenuPaquetesEspeciales = Arrays.asList(
-            "1. $25000 20 dias 7.5GB Win+",
-            "2. $35000 30 dias 12GB Win+",
-            "3. $35000 30 dias 30GB Win+",
-            "4. $9000 6 Dias 1.4GB+WFX+Salud",
+            "1. $25000 20 dias 7.5GB WinSport",
+            "2. $35000 30 dias 12GB WinSport",
+            "3. $35000 30 dias 30GB WinSport",
+            "4. $45000 30 Dias 18GB WinSport",
             "9. Mas",
             "0. Atras"
     );

@@ -38,6 +38,33 @@ public class PopupHandler {
             // Silencioso: no debe interrumpir la ejecución
         }
 
+        // Error USSD / MMI → cerrar con "Aceptar"
+        try {
+            AndroidDriver driver = MyDriver.get();
+            if (driver != null) {
+                if (!driver.findElements(By.xpath(
+                        "//*[contains(@text,'Problema de conexión o código')]")).isEmpty()) {
+                    driver.findElement(By.xpath("//*[@text='Aceptar']")).click();
+                    System.out.println("📌 Popup USSD/MMI detectado y cerrado automáticamente.");
+                }
+            }
+        } catch (Exception e) {
+            // Silencioso
+        }
+
+        // Error MMI incorrecto → cerrar con "Aceptar"
+        try {
+            AndroidDriver driver = MyDriver.get();
+            if (driver != null) {
+                if (driver.findElements(By.xpath("//*[@text='Problema de conexión o código incorrecto de MMI.']")).size() > 0) {
+                    driver.findElement(By.xpath("//*[@text='Aceptar']")).click();
+                    System.out.println("📌 Popup de Claro MMI detectado y cerrado automáticamente (post-step).");
+                }
+            }
+        } catch (Exception e) {
+            // Silencioso: no debe interrumpir la ejecución
+        }
+
         // Popup "SIM Claro" o "Claro" → identificado por su cuerpo de texto, cerrar con "Cancelar"
         try {
             AndroidDriver driver = MyDriver.get();

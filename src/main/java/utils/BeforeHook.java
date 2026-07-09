@@ -64,6 +64,30 @@ public class BeforeHook {
         }
       } catch (Exception e) { /* Silencioso */ }
 
+      // 2️⃣.1 Error USSD / MMI previo → cerrar con "Aceptar"
+      try {
+        if (!driver.findElements(By.xpath(
+                "//*[contains(@text,'Problema de conexión o código')]")).isEmpty()) {
+          driver.findElement(By.xpath("//*[@text='Aceptar']")).click();
+          System.out.println("📌 [BeforeHook] Error USSD/MMI cerrado");
+          Thread.sleep(500);
+        }
+      } catch (Exception e) {
+        // Silencioso
+      }
+
+      // 2️⃣.2 Error USSD / MMI previo → cerrar con "Aceptar"
+      try {
+        if (!driver.findElements(By.xpath(
+                "//*[contains(@text,'Problema de conexión o código incorrecto de MMI.')]")).isEmpty()) {
+          driver.findElement(By.xpath("//*[@text='Aceptar']")).click();
+          System.out.println("📌 [BeforeHook] Error USSD/MMI cerrado");
+          Thread.sleep(500);
+        }
+      } catch (Exception e) {
+        // Silencioso
+      }
+
       // 3️⃣ Popup "SIM Claro" / "Claro" — portal web ← NUEVO
       try {
         if (!driver.findElements(By.xpath(
