@@ -14,7 +14,7 @@ public class PaquetesYOpcionesUSSD {
     );
 
     public static final List<String> MenuCompraDePaquetes = Arrays.asList(
-            "1. ",
+            "1. El mas vendido: $9000 6 Dias 1.4GB+WFX+Voz",
 
             "2. Paquete de Datos",
             "3. Paquete Todo Incluido",
@@ -23,25 +23,26 @@ public class PaquetesYOpcionesUSSD {
     );
 
     public static final List<String> MenuPaquetesDatos = Arrays.asList(
-            "1. $2000 1Dia 200MB Nav+WhatsApp",
-            "2. $3000 1Dia 400MB Nav+WFX",
-            "3. $5000 3Dias 800MB Nav+WFX",
-            "4. $6000 2Horas Nav Ilimitada",
+            "1. $3000 1Dia 200MB Nav+WhatsApp",
+            "2. $3500 1Dia 400MB Nav+WFX",
+            "3. $6000 3Dias 800MB Nav+WFX",
+            "4. $7000 2Horas Nav Ilimitada",
             "9. Mas",
             "0. Atras"
     );
 
     public static final List<String> MenuMediosDePagoDePaqueteDeDatos = Arrays.asList(
             "Selecciona el medio de pago para tu paquete:",
-            "1. Nequi",
-            "2. Descuento de saldo",
+            "1. Tarjeta de Credito",
+            "2. Nequi",
+            "3. Descuento de saldo",
             "0. Atras"
     );
 
     public static final List<String> MenuPaquetesTodoIncluido = Arrays.asList(
-            "1. $5000 3 Dias 400MB+WFX+Voz",
-            "2. $8000 6 Dias 1.4GB+WFX+Voz",
-            "3. $9000 7 Dias 2GB+WFX+Voz",
+            "1. $5500 3 Dias 400MB+WFX+Voz",
+            "2. $9000 6 Dias 1.4GB+WFX+Voz",
+            "3. $10000 7 Dias 2GB+WFX+Voz",
             "4. $11000 7 dias 2GB WinSport",
             "9. Mas",
             "0. Atras"
@@ -75,7 +76,7 @@ public class PaquetesYOpcionesUSSD {
     );
 
     public static final List<String> MenuPaquetesLargaDuracion = Arrays.asList(
-            "1. $13000 7 Dias 10GB+Voz",
+            "1. $14000 7 Dias 10GB+Voz",
             "2. $15000 10 dias 3.5GB WinSport",
             "3. $15000 7 dias 10GB WinSport",
             "4. $25000 15 dias 20GB WinSport",

@@ -10,7 +10,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     Then Valida Menu Medios De Pago De Paquetes El Mas vendido
 
 
-  @USSD_002
+  @USSD_002 
   Scenario: Compra de paquetes - paquetes  de datos
     Given Se realiza la llamada al numero *611#
     When Valida Menu Inicio
@@ -21,7 +21,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Ingreso la opcion "1" para medios de pago
     And Valida Menu Medios De Pago De Paquetes De Datos
 
-  @USSD_003 
+  @USSD_003
   Scenario: Compra de paquetes - paquetes todo incluido 1
     Given Se realiza la llamada al numero *611#
     When Valida Menu Inicio
@@ -32,7 +32,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Ingreso la opcion "1" para medios de pago
     And Valida Menu Medios De Pago De Paquetes Todo Incluido
 
-  @USSD_004 
+  @USSD_004
   Scenario: Compra de paquetes - paquetes todo incluido 2
     Given Se realiza la llamada al numero *611#
     When Valida Menu Inicio
@@ -86,7 +86,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Ingreso la opcion "1" para medios de pago
     And Valida Menu Medios De Pago De Paquetes De Datos
 
-  @USSD_008
+  @USSD_008 
   Scenario: Compra de recargas - paquetes todo incluido
     Given Se realiza la llamada al numero *611#
     When Valida Menu Inicio
@@ -95,7 +95,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Ingreso la opcion "1" para paquetes todo incluido
     And Valida Menu Medios De Pago Recarga
 
-  @USSD_009
+  @USSD_009 
   Scenario: Compra de recargas - mas opciones de recargas 1
     Given Se realiza la llamada al numero *611#
     When Valida Menu Inicio
@@ -147,7 +147,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     And Valida Menu Recarga Valores Altos
     Then Cancelar
 
-  @USSD_013 
+  @USSD_013  
   Scenario: Consulta de saldos y consumos - Ver opciones de paquetes despues de conusltar saldo
     Given Se realiza la llamada al numero *611#
     When Valida Menu Inicio
@@ -175,7 +175,7 @@ Feature: El usuario realiza compra de paquetes por el canal USSD
     #And Valida Menu Detalle De Consumo
     Then Cancelar
     
-  @USSD_015
+  @USSD_015 
   Scenario: Activacion de Linea
     Given Se realiza la llamada al numero *611#
     When Valida Menu Inicio
