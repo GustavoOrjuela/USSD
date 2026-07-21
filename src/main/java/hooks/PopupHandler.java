@@ -6,100 +6,90 @@ import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import utils.MyDriver;
 
+import java.util.concurrent.TimeUnit;
+
 public class PopupHandler {
+
+    /**
+     * Tiempo máximo de búsqueda de elementos (0 = sin espera, detección inmediata).
+     * Evita que findElements espere el implicit wait completo cuando no hay popup.
+     */
+    private static final int IMPLICIT_WAIT_POPUP = 0;
 
     @Before
     @After
-    public void cerrarPopupClaro() {
+    public void cerrarPopups() {
+        AndroidDriver driver = MyDriver.get();
+        if (driver == null) return;
 
-        // Popup genérico con botón "Aceptar" visible → cerrar con "Cancelar"
-        try {
-            AndroidDriver driver = MyDriver.get();
-            if (driver != null) {
-                if (driver.findElements(By.xpath("//*[@text='Aceptar']")).size() > 0) {
-                    driver.findElement(By.xpath("//*[@text='Cancelar']")).click();
-                    System.out.println("📌 Popup de Claro detectado y cerrado automáticamente (post-step).");
-                }
-            }
-        } catch (Exception e) {
-            // Silencioso: no debe interrumpir la ejecución
-        }
+        // Desactivar implicit wait para que findElements sea instantáneo
+        driver.manage().timeouts().implicitlyWait(IMPLICIT_WAIT_POPUP, TimeUnit.SECONDS);
 
-        // Error MMI incorrecto → cerrar con "Aceptar"
         try {
-            AndroidDriver driver = MyDriver.get();
-            if (driver != null) {
-                if (driver.findElements(By.xpath("//*[@text='Problema de conexión o código MMI incorrecto.']")).size() > 0) {
-                    driver.findElement(By.xpath("//*[@text='Aceptar']")).click();
-                    System.out.println("📌 Popup de Claro MMI detectado y cerrado automáticamente (post-step).");
-                }
-            }
-        } catch (Exception e) {
-            // Silencioso: no debe interrumpir la ejecución
-        }
-
-        // Error USSD / MMI → cerrar con "Aceptar"
-        try {
-            AndroidDriver driver = MyDriver.get();
-            if (driver != null) {
-                if (!driver.findElements(By.xpath(
-                        "//*[contains(@text,'Problema de conexión o código')]")).isEmpty()) {
-                    driver.findElement(By.xpath("//*[@text='Aceptar']")).click();
-                    System.out.println("📌 Popup USSD/MMI detectado y cerrado automáticamente.");
-                }
-            }
-        } catch (Exception e) {
-            // Silencioso
-        }
-
-        // Error MMI incorrecto → cerrar con "Aceptar"
-        try {
-            AndroidDriver driver = MyDriver.get();
-            if (driver != null) {
-                if (driver.findElements(By.xpath("//*[@text='Problema de conexión o código incorrecto de MMI.']")).size() > 0) {
-                    driver.findElement(By.xpath("//*[@text='Aceptar']")).click();
-                    System.out.println("📌 Popup de Claro MMI detectado y cerrado automáticamente (post-step).");
-                }
-            }
-        } catch (Exception e) {
-            // Silencioso: no debe interrumpir la ejecución
-        }
-
-        // Popup "SIM Claro" o "Claro" → identificado por su cuerpo de texto, cerrar con "Cancelar"
-        try {
-            AndroidDriver driver = MyDriver.get();
-            if (driver != null) {
-                if (!driver.findElements(By.xpath(
-                        "//*[contains(@text,'Continua la compra de tus productos Claro')]")).isEmpty()) {
-                    driver.findElement(By.xpath("//*[@text='Cancelar']")).click();
-                    System.out.println("📌 Popup 'SIM Claro' / 'Claro' detectado y cerrado automáticamente.");
-                }
-            }
-        } catch (Exception e) {
-            // Silencioso: no debe interrumpir la ejecución
-        }
-
-        // Diálogo USSD abierto → cerrar con "Cancelar"
-        try {
-            AndroidDriver driver = MyDriver.get();
-            if (driver != null && !driver.findElements(By.xpath("//*[@text='Cancelar']")).isEmpty()) {
-                driver.findElement(By.xpath("//*[@text='Cancelar']")).click();
-                System.out.println("📌 Pantalla USSD cerrada automáticamente al finalizar el escenario");
-            }
-        } catch (Exception e) {
-            System.out.println("⚠️ No se pudo cerrar el USSD: " + e.getMessage());
-        }
-
-        // Error de código incorrecto (sin MMI) → cerrar con "Aceptar"
-        try {
-            AndroidDriver driver = MyDriver.get();
-            if (driver != null && !driver.findElements(
-                    By.xpath("//*[@text='Problema de conexión o código incorrecto']")).isEmpty()) {
-                driver.findElement(By.xpath("//*[@text='Aceptar']")).click();
-                System.out.println("📌 Pantalla de error de código USSD cerrada automáticamente al finalizar el escenario");
-            }
-        } catch (Exception e) {
-            System.out.println("⚠️ No se pudo cerrar el USSD: " + e.getMessage());
+            cerrarPopupSimClaro(driver);
+            cerrarPopupIniciarExplorador(driver);
+            cerrarPopupErrorConexion(driver);
+            cerrarUSSDResidual(driver);
+        } finally {
+            // Restaurar implicit wait original del proyecto
+            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         }
     }
+
+    // ─────────────────────────────────────────────────────────────
+    // 1. Popup "SIM Claro" / "Claro" → cuerpo identificable
+    //    Botón: Cancelar
+    // ─────────────────────────────────────────────────────────────
+    private void cerrarPopupSimClaro(AndroidDriver driver) {
+        try {
+            if (!driver.findElements(By.xpath(
+                    "//*[contains(@text,'Continua la compra de tus productos Claro')]")).isEmpty()) {
+                driver.findElement(By.xpath("//*[@text='Cancelar']")).click();
+                System.out.println("📌 [PopupHandler] Popup 'SIM Claro' cerrado");
+            }
+        } catch (Exception e) { /* Silencioso */ }
+    }
+
+
+    // ─────────────────────────────────────────────────────────────
+    // 2. Popup "Iniciar el explorador" → nuevo popup detectado
+    //    Botón: Cancelar
+    // ─────────────────────────────────────────────────────────────
+    private void cerrarPopupIniciarExplorador(AndroidDriver driver) {
+        try {
+            if (!driver.findElements(By.xpath(
+                    "//*[contains(@text,'Iniciar el explorador')]")).isEmpty()) {
+                driver.findElement(By.xpath("//*[@text='Cancelar']")).click();
+                System.out.println("📌 [PopupHandler] Popup 'Iniciar el explorador' cerrado");
+            }
+        } catch (Exception e) { /* Silencioso */ }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 3. Error de conexión / MMI (todas las variantes)
+    //    Botón: Aceptar
+    // ─────────────────────────────────────────────────────────────
+    private void cerrarPopupErrorConexion(AndroidDriver driver) {
+        try {
+            if (!driver.findElements(By.xpath(
+                    "//*[contains(@text,'Problema de conexión o código')]")).isEmpty()) {
+                driver.findElement(By.xpath("//*[@text='Aceptar']")).click();
+                System.out.println("📌 [PopupHandler] Popup error conexión/MMI cerrado");
+            }
+        } catch (Exception e) { /* Silencioso */ }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 4. Diálogo USSD residual abierto
+    //    Botón: Cancelar
+    // ─────────────────────────────────────────────────────────────
+    private void cerrarUSSDResidual(AndroidDriver driver) {
+        try {
+            if (!driver.findElements(By.xpath("//*[@text='Cancelar']")).isEmpty()) {
+                driver.findElement(By.xpath("//*[@text='Cancelar']")).click();
+                System.out.println("📌 [PopupHandler] USSD residual cerrado");
+            }
+        } catch (Exception e) { /* Silencioso */ }
+    }
+    
 }

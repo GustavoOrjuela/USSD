@@ -11,6 +11,8 @@ import org.junit.Before;
 import org.openqa.selenium.By;
 import utils.MyDriver;
 
+import java.util.concurrent.TimeUnit;
+
 import static net.serenitybdd.screenplay.actors.OnStage.theActorCalled;
 
 public class BeforeHook {
@@ -44,77 +46,53 @@ public class BeforeHook {
 
       System.out.println("🔍 [BeforeHook] Verificando popups iniciales...");
 
-      // 1️⃣ Error MMI incorrecto
-      try {
-        if (!driver.findElements(By.xpath(
-                "//*[@text='Problema de conexión o código MMI incorrecto.']")).isEmpty()) {
-          driver.findElement(By.xpath("//*[@text='Aceptar']")).click();
-          System.out.println("📌 [BeforeHook] Error MMI cerrado");
-          Thread.sleep(500);
-        }
-      } catch (Exception e) { /* Silencioso */ }
+      // Desactivar implicit wait para detección instantánea
+      driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
 
-      // 2️⃣ Error USSD previo (sin MMI)
       try {
-        if (!driver.findElements(By.xpath(
-                "//*[@text='Problema de conexión o código incorrecto']")).isEmpty()) {
-          driver.findElement(By.xpath("//*[@text='Aceptar']")).click();
-          System.out.println("📌 [BeforeHook] Error USSD cerrado");
-          Thread.sleep(500);
-        }
-      } catch (Exception e) { /* Silencioso */ }
+        // 1. SIM Claro / Claro portal
+        try {
+          if (!driver.findElements(By.xpath(
+                  "//*[contains(@text,'Continua la compra de tus productos Claro')]")).isEmpty()) {
+            driver.findElement(By.xpath("//*[@text='Cancelar']")).click();
+            System.out.println("📌 [BeforeHook] Popup 'SIM Claro' cerrado");
+            Thread.sleep(500);
+          }
+        } catch (Exception e) { /* Silencioso */ }
 
-      // 2️⃣.1 Error USSD / MMI previo → cerrar con "Aceptar"
-      try {
-        if (!driver.findElements(By.xpath(
-                "//*[contains(@text,'Problema de conexión o código')]")).isEmpty()) {
-          driver.findElement(By.xpath("//*[@text='Aceptar']")).click();
-          System.out.println("📌 [BeforeHook] Error USSD/MMI cerrado");
-          Thread.sleep(500);
-        }
-      } catch (Exception e) {
-        // Silencioso
+        // 2. Iniciar el explorador
+        try {
+          if (!driver.findElements(By.xpath(
+                  "//*[contains(@text,'Iniciar el explorador')]")).isEmpty()) {
+            driver.findElement(By.xpath("//*[@text='Cancelar']")).click();
+            System.out.println("📌 [BeforeHook] Popup 'Iniciar explorador' cerrado");
+            Thread.sleep(500);
+          }
+        } catch (Exception e) { /* Silencioso */ }
+
+        // 3. Error conexión / MMI (todas las variantes con contains)
+        try {
+          if (!driver.findElements(By.xpath(
+                  "//*[contains(@text,'Problema de conexión o código')]")).isEmpty()) {
+            driver.findElement(By.xpath("//*[@text='Aceptar']")).click();
+            System.out.println("📌 [BeforeHook] Error conexión/MMI cerrado");
+            Thread.sleep(500);
+          }
+        } catch (Exception e) { /* Silencioso */ }
+
+        // 4. USSD residual
+        try {
+          if (!driver.findElements(By.xpath("//*[@text='Cancelar']")).isEmpty()) {
+            driver.findElement(By.xpath("//*[@text='Cancelar']")).click();
+            System.out.println("📌 [BeforeHook] USSD residual cerrado");
+            Thread.sleep(500);
+          }
+        } catch (Exception e) { /* Silencioso */ }
+
+      } finally {
+        // Restaurar implicit wait original
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
       }
-
-      // 2️⃣.2 Error USSD / MMI previo → cerrar con "Aceptar"
-      try {
-        if (!driver.findElements(By.xpath(
-                "//*[contains(@text,'Problema de conexión o código incorrecto de MMI.')]")).isEmpty()) {
-          driver.findElement(By.xpath("//*[@text='Aceptar']")).click();
-          System.out.println("📌 [BeforeHook] Error USSD/MMI cerrado");
-          Thread.sleep(500);
-        }
-      } catch (Exception e) {
-        // Silencioso
-      }
-
-      // 3️⃣ Popup "SIM Claro" / "Claro" — portal web ← NUEVO
-      try {
-        if (!driver.findElements(By.xpath(
-                "//*[contains(@text,'Continua la compra de tus productos Claro')]")).isEmpty()) {
-          driver.findElement(By.xpath("//*[@text='Cancelar']")).click();
-          System.out.println("📌 [BeforeHook] Popup 'SIM Claro' portal web cerrado");
-          Thread.sleep(500);
-        }
-      } catch (Exception e) { /* Silencioso */ }
-
-      // 4️⃣ Popup genérico con "Aceptar" visible → cerrar con "Cancelar"
-      try {
-        if (!driver.findElements(By.xpath("//*[@text='Aceptar']")).isEmpty()) {
-          driver.findElement(By.xpath("//*[@text='Cancelar']")).click();
-          System.out.println("📌 [BeforeHook] Popup de Claro cerrado");
-          Thread.sleep(500);
-        }
-      } catch (Exception e) { /* Silencioso */ }
-
-      // 5️⃣ USSD residual → cerrar con "Cancelar"
-      try {
-        if (!driver.findElements(By.xpath("//*[@text='Cancelar']")).isEmpty()) {
-          driver.findElement(By.xpath("//*[@text='Cancelar']")).click();
-          System.out.println("📌 [BeforeHook] USSD previo cerrado");
-          Thread.sleep(500);
-        }
-      } catch (Exception e) { /* Silencioso */ }
 
       System.out.println("✅ [BeforeHook] Verificación de popups completada");
 
