@@ -19,20 +19,23 @@ public class PopupHandler {
     @Before
     @After
     public void cerrarPopups() {
-        AndroidDriver driver = MyDriver.get();
-        if (driver == null) return;
-
-        // Desactivar implicit wait para que findElements sea instantáneo
-        driver.manage().timeouts().implicitlyWait(IMPLICIT_WAIT_POPUP, TimeUnit.SECONDS);
-
+        PopupGuardian.DRIVER_LOCK.lock();
         try {
-            cerrarPopupSimClaro(driver);
-            cerrarPopupIniciarExplorador(driver);
-            cerrarPopupErrorConexion(driver);
-            cerrarUSSDResidual(driver);
+            AndroidDriver driver = MyDriver.get();
+            if (driver == null) return;
+
+            driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+
+            try {
+                cerrarPopupSimClaro(driver);
+                cerrarPopupIniciarExplorador(driver);
+                cerrarPopupErrorConexion(driver);
+                cerrarUSSDResidual(driver);
+            } finally {
+                driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+            }
         } finally {
-            // Restaurar implicit wait original del proyecto
-            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+            PopupGuardian.DRIVER_LOCK.unlock();
         }
     }
 
@@ -91,5 +94,5 @@ public class PopupHandler {
             }
         } catch (Exception e) { /* Silencioso */ }
     }
-    
+
 }

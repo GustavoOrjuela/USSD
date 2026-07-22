@@ -15,10 +15,7 @@ import net.serenitybdd.screenplay.abilities.BrowseTheWeb;
 import net.serenitybdd.screenplay.questions.Presence;
 import net.serenitybdd.screenplay.targets.Target;
 import net.thucydides.core.webdriver.WebDriverFacade;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -192,9 +189,18 @@ public class AndroidObject extends Excepciones {
 
 
     public void ElTextoContiene(Actor actor, String text) {
-        androidDriver(actor).findElement(
-                        new MobileBy.ByAndroidUIAutomator(("new UiSelector().textContains(\"" + text + "\")")))
-                .isDisplayed();
+        try {
+            androidDriver(actor)
+                    .findElement(new MobileBy.ByAndroidUIAutomator(
+                            "new UiSelector().textContains(\"" + text + "\")"))
+                    .isDisplayed();
+        } catch (StaleElementReferenceException e) {
+            // El popup cerró el DOM — re-buscar inmediatamente sin espera
+            androidDriver(actor)
+                    .findElement(new MobileBy.ByAndroidUIAutomator(
+                            "new UiSelector().textContains(\"" + text + "\")"))
+                    .isDisplayed();
+        }
     }
 
     public void ValidarTexto(Actor actor, String text) {

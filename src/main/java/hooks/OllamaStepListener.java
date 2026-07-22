@@ -59,6 +59,12 @@ public class OllamaStepListener implements StepListener {
             return;
         }
 
+        // ── NUEVO: verificar disponibilidad antes de reintentar 3 veces ──
+        if (!ollamaClient.isAvailable()) {
+            System.out.println("⏭️ [OllamaListener] Ollama no disponible, omitiendo análisis.");
+            return;
+        }
+
         Throwable cause = failure.getException();
         String stepDescription = failure.getMessage();
 

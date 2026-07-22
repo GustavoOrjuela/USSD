@@ -3,11 +3,16 @@ package interactions.ussd;
 import interactions.wait.WaitFor;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Interaction;
-import net.serenitybdd.screenplay.actions.Click;
-import net.serenitybdd.screenplay.actions.Enter;
 import net.thucydides.core.annotations.Step;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.CapturaDePantallaMovil;
 import utils.EvidenciaUtils;
+
+import java.util.List;
 
 import static net.serenitybdd.screenplay.Tasks.instrumented;
 import static userinterfaces.USSDPage.*;
@@ -41,35 +46,15 @@ public class IngresarOpcionUSSD implements Interaction {
     public <T extends Actor> void performAs(T actor) {
         try {
             System.out.println("📱 Ingresando opción USSD: " + opcion + " - " + descripcionPaso);
-
-            // Registrar el paso para evidencia
             EvidenciaUtils.registrarCaptura("Antes de ingresar opción " + opcion + " - " + descripcionPaso);
 
-            // Esperar a que el campo de entrada esté disponible
-            actor.attemptsTo(WaitFor.aTime(2000));
-
-            // Limpiar campo si hay contenido previo
-            limpiarCampoSiEsNecesario(actor);
-
-            // Ingresar la opción seleccionada
-            actor.attemptsTo(
-                    Enter.theValue(opcion).into(CJA_INGRESAR_OPCION)
-            );
-
-            // Captura después de ingresar la opción
+            escribirOpcionDirecto(actor);
             CapturaDePantallaMovil.tomarCapturaPantalla("opcion_" + opcion + "_ingresada");
+            clickEnviarDirecto(actor);
 
-            // Confirmar la selección con el botón Enviar
-            actor.attemptsTo(
-                    Click.on(BTN_ENVIAR)
-            );
+            actor.attemptsTo(WaitFor.aTime(1200));
 
-            // Esperar procesamiento de la solicitud
-            actor.attemptsTo(WaitFor.aTime(3000));
-
-            // Captura final del resultado
             EvidenciaUtils.registrarCaptura("Resultado después de enviar opción " + opcion + " - " + descripcionPaso);
-
             System.out.println("✅ Opción USSD " + opcion + " procesada exitosamente");
 
         } catch (Exception e) {
@@ -79,62 +64,87 @@ public class IngresarOpcionUSSD implements Interaction {
         }
     }
 
-    /**
-     * Limpia el campo de entrada si contiene texto previo
-     */
     private <T extends Actor> void limpiarCampoSiEsNecesario(T actor) {
         try {
-            // Seleccionar todo el texto del campo y limpiarlo
             actor.attemptsTo(
-                    Click.on(CJA_INGRESAR_OPCION)
+                    net.serenitybdd.screenplay.actions.Click.on(CJA_INGRESAR_OPCION)
             );
-
-            // Pausa para asegurar que el campo esté seleccionado
             actor.attemptsTo(WaitFor.aTime(500));
-
         } catch (Exception e) {
             System.out.println("ℹ️ Campo de entrada no necesita limpieza o no está disponible");
         }
     }
 
-    // Factory methods para casos específicos del flujo USSD
-
-    /**
-     * Método específico para seleccionar compra de paquetes (opción 1)
-     */
     public static IngresarOpcionUSSD compraDePaquetes() {
         return instrumented(IngresarOpcionUSSD.class, "1", "Compra de paquetes");
     }
 
-    /**
-     * Método específico para seleccionar el paquete más vendido (opción 1)
-     */
     public static IngresarOpcionUSSD paqueteMasVendido() {
         return instrumented(IngresarOpcionUSSD.class, "1", "El más vendido");
     }
 
-    /**
-     * Método específico para seleccionar recargas (opción 2)
-     */
     public static IngresarOpcionUSSD recargas() {
         return instrumented(IngresarOpcionUSSD.class, "2", "Recargas");
     }
 
-    /**
-     * Método específico para consulta de saldo (opción 3)
-     */
     public static IngresarOpcionUSSD consultaSaldo() {
         return instrumented(IngresarOpcionUSSD.class, "3", "Consulta de saldo y consumos");
     }
 
-    /**
-     * Método genérico para cualquier opción personalizada
-     */
     public static IngresarOpcionUSSD opcionPersonalizada(String numero, String descripcion) {
         return instrumented(IngresarOpcionUSSD.class, numero, descripcion);
     }
 
-    // Getters para testing y debugging
+    /**
+     * Escribe la opción directamente con el driver, usando espera reactiva
+     * (polling cada 200ms) en vez de implicit wait bloqueante. Ignora
+     * StaleElementReferenceException para reintentar la búsqueda si el DOM
+     * cambió justo antes de localizar el campo.
+     *
+     * Nota: se usa la firma (driver, long timeOutInSeconds, long sleepInMillis)
+     * porque el proyecto está en Selenium 3.141.59, donde WebDriverWait no
+     * tiene overloads con Duration (esos llegaron en Selenium 4).
+     */
+    private <T extends Actor> void escribirOpcionDirecto(T actor) {
+        io.appium.java_client.android.AndroidDriver driver = utils.AndroidObject.androidDriver(actor);
+        try {
+            WebElement campo = new WebDriverWait(driver, 5L, 200L)
+                    .ignoring(StaleElementReferenceException.class)
+                    .ignoring(NoSuchElementException.class)
+                    .until(d -> {
+                        List<WebElement> campos = d.findElements(By.id("com.android.phone:id/input_field"));
+                        return campos.isEmpty() ? null : campos.get(0);
+                    });
+            campo.sendKeys(opcion);
+            System.out.println("⌨️ [IngresarOpcionUSSD] Opción '" + opcion + "' escrita directamente");
+        } catch (Exception e) {
+            throw new RuntimeException("Campo input_field no encontrado en pantalla: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Hace click en el botón Enviar con espera reactiva y tolerancia a
+     * StaleElementReferenceException. Timeout corto porque el botón puede
+     * legítimamente no existir en todos los menús (comportamiento silencioso
+     * se conserva).
+     */
+    private <T extends Actor> void clickEnviarDirecto(T actor) {
+        io.appium.java_client.android.AndroidDriver driver = utils.AndroidObject.androidDriver(actor);
+        try {
+            WebElement boton = new WebDriverWait(driver, 4L, 200L)
+                    .ignoring(StaleElementReferenceException.class)
+                    .ignoring(NoSuchElementException.class)
+                    .until(d -> {
+                        List<WebElement> botones = d.findElements(By.id("android:id/button1"));
+                        return botones.isEmpty() ? null : botones.get(0);
+                    });
+            boton.click();
+            System.out.println("✅ [IngresarOpcionUSSD] Botón Enviar clickeado");
+        } catch (Exception e) {
+            System.out.println("ℹ️ [IngresarOpcionUSSD] Botón Enviar no encontrado: " + e.getMessage());
+        }
+    }
+
     public String getOpcion() {
         return opcion;
     }
